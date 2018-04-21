@@ -43,7 +43,7 @@
          (#{name},#{note},now(),now(),#{createdUser},#{modifiedUser})
     </insert>
     
-    <sql id="pageWhere">
+    <sql id="pageWhere">   <!-- 模糊查找 -->
         <where>
          <if test="name!=null and name!=''">
             name like concat("%",#{name},"%")

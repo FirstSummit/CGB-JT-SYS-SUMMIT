@@ -18,5 +18,7 @@ public interface SysRoleService {
 	 Map<String,Object> findObjectById(Integer id);
 	 
 	 int updateObject(SysRole entity,String menuIds);
+
+	
 	 
 }

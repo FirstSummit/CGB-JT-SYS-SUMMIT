@@ -138,20 +138,20 @@ public class SysRoleServiceImpl implements SysRoleService{
 	@Override
 	public int deleteObject(String idStr) {
 		//1.参数合法性验证
-		if(StringUtils.isEmpty(idStr))
-		throw new ServiceException("必须选中才能删除");
-		//2.解析字符串
-		String[] ids=idStr.split(",");
-		//3.调用数据层方法执行删除操作
-		int rows=sysRoleDao.deleteObject(ids);
-		
-		for(String id:ids){
-			sysRoleMenuDao.deleteObject(Integer.valueOf(id));
-		    sysUserRoleDao.deleteObject(null, Integer.valueOf(id));
-		}
-		//4.返回处理结果
-		if(rows==0)
-		throw new ServiceException("数据已经不存在");
-		return rows;
-	}
+				if(StringUtils.isEmpty(idStr))
+				throw new ServiceException("必须选中才能删除");
+				//2.解析字符串
+				String[] ids=idStr.split(",");
+				//3.调用数据层方法执行删除操作
+				int rows=sysRoleDao.deleteObject(ids);
+				
+				for(String id:ids){
+					sysRoleMenuDao.deleteObject(Integer.valueOf(id));
+				    sysUserRoleDao.deleteObject(null, Integer.valueOf(id));
+				}
+				//4.返回处理结果
+				if(rows==0)
+				throw new ServiceException("数据已经不存在");
+				return rows;
+			}
 }

@@ -49,6 +49,16 @@ public class SysMenuController {
 	}
 	
 	
+	
+	
+	@RequestMapping("doFindZTreeNodes")
+	@ResponseBody
+	public JsonResult doFindZTreeNodes(){
+		return new JsonResult(
+		sysMenuService.findZTreeNodes());
+	}
+	
+	
 	@RequestMapping("doDeleteObject")
 	@ResponseBody
 	public JsonResult doDeleteObject(Integer id){

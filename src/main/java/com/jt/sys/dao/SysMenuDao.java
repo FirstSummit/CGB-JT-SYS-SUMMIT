@@ -7,7 +7,7 @@ import com.jt.sys.entity.SysMenu;
 public interface SysMenuDao {
 	int updateObject(SysMenu entity);
 	int insertObject(SysMenu entity);
-
+  
 	/**获取菜单信息及对应的上级菜单的名称
 	 * Map<String,Object>：一行记录对应一个map
 	 * key:为字段名
@@ -28,5 +28,12 @@ public interface SysMenuDao {
 	int getChildCount(Integer id);
 	/**删除菜单元素定义*/
 	int deleteObject(Integer id);
+	List<Node> findZTreeNodes();
+	/**获取菜单信息及对应的上级菜单的名称
+	 * Map<String,Object>：一行记录对应一个map
+	 * key:为字段名
+	 * value:为字段对应值
+	 * 多行记录对应多个map，多个map存储到list集合
+	 * */
 
 }

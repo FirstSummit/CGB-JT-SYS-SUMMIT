@@ -3,9 +3,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import com.jt.common.exception.ServiceException;
 import com.jt.common.vo.Node;
@@ -97,6 +94,11 @@ public class SysMenuServiceImpl implements SysMenuService {
 		if(rows==0)
 		throw new ServiceException("此菜单在数据库中可能已经不存在");
 		return rows;
+	}
+	@Override
+	public List<Node> findZTreeNodes() {
+		// TODO Auto-generated method stub
+		return sysMenuDao.findZTreeNodes();
 	}
 }
 

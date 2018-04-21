@@ -13,4 +13,5 @@ public interface SysMenuService {
 	
 	Map<String,Object> findObjectById(Integer id);
 	int deleteObject(Integer id);
+	List<Node> findZTreeNodes();
 }

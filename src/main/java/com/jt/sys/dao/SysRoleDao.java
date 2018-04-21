@@ -15,6 +15,8 @@ public interface SysRoleDao {
 	/**获取总记录数*/
 	int getRowCount(@Param("name")String name);
 	
+	
+	/**添加删除功能*/
 	int deleteObject(@Param("ids") String[] ids);
 	int insertObject(SysRole entity);
 	SysRole findObjectById(Integer id);

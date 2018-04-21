@@ -1,16 +1,14 @@
 package com.jt.common.controller;
 
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.jt.common.exception.ServiceException;
 import com.jt.common.vo.JsonResult;
-/**Spring MVC 基于注解方式实现统一异常处理方式
- * 规则
- * 1)controller内部-->父类-->@ControllerAdvice
+/**Spring MVC 鍩轰簬娉ㄨВ鏂瑰紡瀹炵幇缁熶竴寮傚父澶勭悊鏂瑰紡
+ * 瑙勫垯
+ * 1)controller鍐呴儴-->鐖剁被-->@ControllerAdvice
  * */
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -21,7 +19,7 @@ public class ControllerExceptionHandler {
 			  RuntimeException e){
 		  System.out.println("handleServiceException");
 		  e.printStackTrace();
-		  //封装错误信息
+		  //灏佽閿欒淇℃伅
 		  return new JsonResult(e);
 	  }
 	  @ExceptionHandler(AuthorizationException.class)
@@ -30,8 +28,8 @@ public class ControllerExceptionHandler {
 			  AuthorizationException e){
 		  System.out.println("handleAuthorizationeException");
 		  e.printStackTrace();
-		  //封装错误信息
-		  return new JsonResult(new ServiceException("没有此权限"));
+		  //灏佽閿欒淇℃伅
+		  return new JsonResult(new ServiceException("娌℃湁姝ゆ潈闄�"));
 	  }
 	  //....... 
 }
