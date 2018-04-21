@@ -86,9 +86,6 @@ public class SysRoleServiceImpl implements SysRoleService{
     	throw new ServiceException("角色名不能为空");
     	//2.保存数据
     	int rows;
-    	String username=
-    	ShiroUtils.getPrincipal().getUsername();
-    	entity.setCreatedUser(username);
     	try{
     	rows=sysRoleDao.insertObject(entity);
     	sysRoleMenuDao.insertObject(
