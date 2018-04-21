@@ -1,7 +1,10 @@
 package com.jt.sys.service;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.jt.common.vo.CheckBox;
 import com.jt.common.vo.PageObject;
@@ -34,6 +37,6 @@ public interface SysUserService {
 	   
 	   int validById(Integer id,Integer valid);
 	   
-	   
+	   Workbook findObjects(OutputStream out) throws Exception;
 	   
 }
