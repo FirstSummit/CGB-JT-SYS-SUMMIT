@@ -61,11 +61,42 @@
     	
     });
  
+    //页面加载完成初始化zTree
+    function doLoadSysMenus(){
+    	var url="menu/doFindZTreeNodes.do"
+        	$.getJSON(url,function(result){
+        		if(result.state==1){
+        		ztree=$.fn.zTree.init(
+        		$("#menuTree"),setting,result.data);
+        		var data=$(".container-fluid").data("data");
+            	if(data){
+            		doInitEditForm(data);
+            	}
+        		}else{
+        		alert(result.message);
+        		}
+        	})
+    }
+    
+    
+    
+    
+    
+    
+    
     //初始化表单数据
     function doInitEditForm(data){
     	$("#nameId").val(data.role.name);
     	$("#noteId").val(data.role.note);
-    	
+    	//展开所有节点
+		ztree.expandAll(true);
+		//勾选角色所拥有的菜单
+		var menuIds = data.menuIds;
+		for(var i=0; i<menuIds.length; i++) {
+			//获取key为id值为menuIds[i]的节点
+			var node = ztree.getNodeByParam("id",menuIds[i]);
+			//选中当前节点
+			ztree.checkNode(node,true,false);
 		}
     }
     //点击退出按钮时执行此方法
@@ -104,6 +135,15 @@
     		name:$("#nameId").val(),
     		note:$("#noteId").val()
     	}
+    	//获取选中的node节点
+    	var menuIds=[];
+    	var checkedNodes=
+    	ztree.getCheckedNodes(true);
+    	for(var i in checkedNodes){
+    		menuIds.push(checkedNodes[i].id)
+    	}
+    	params.menuIds=menuIds.toString();
+    	return params;
     	
     }
     </script>
