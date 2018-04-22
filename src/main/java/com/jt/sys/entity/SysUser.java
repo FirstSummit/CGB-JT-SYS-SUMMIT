@@ -70,4 +70,10 @@ public class SysUser extends BaseEntity implements Serializable {
 		this.valid = valid;
 	}
 
+	@Override
+	public String toString() {
+		return "SysUser [id=" + id + ", username=" + username + ", password=" + password + ", salt=" + salt + ", email="
+				+ email + ", mobile=" + mobile + ", valid=" + valid + "]";
+	}
+	
 }

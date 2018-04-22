@@ -2,6 +2,7 @@ package com.jt.sys.service.impl;
 
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -234,7 +235,8 @@ public class SysUserServiceImpl implements SysUserService {
 	public Workbook findObjects(OutputStream out) throws Exception {
 		//查询获取所有的用户信息
 		List<SysUser> sysUsers = sysUserDao.findObjects();
-		System.out.println(sysUsers);
+		System.out.println("********"+sysUsers.get(0).getModifiedTime());
+		
 		//创建一个workbook
 		Workbook workbook = new XSSFWorkbook();	
 		//得到一个POI工具类
@@ -273,6 +275,11 @@ public class SysUserServiceImpl implements SysUserService {
         head.setCellStyle(cellStyle);
         Row row = sheet.createRow(1);
         Field[] fields = sysUsers.get(0).getClass().getDeclaredFields();
+        Field[] fields1 = sysUsers.get(0).getClass().getSuperclass().getDeclaredFields();
+        int len=fields.length;
+        fields=Arrays.copyOf(fields, len+fields1.length);
+        System.out.println(Arrays.toString(fields));
+        System.arraycopy(fields1, 0, fields, len, fields1.length);
        for(int i=1; i<fields.length;i++){
     	   System.out.println(fields[i]);
     	   Cell cell = row.createCell(i-1);
