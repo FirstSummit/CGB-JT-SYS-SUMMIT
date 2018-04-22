@@ -306,6 +306,7 @@ public class SysUserServiceImpl implements SysUserService {
     	   }
        }
        workbook.write(out);
+       out.close();
        return workbook;
 	}
 }
