@@ -81,12 +81,18 @@ public class SysUserController {
 		return new JsonResult(pageObject);
 	}
 	
+	@RequestMapping("doDownload")
+	@ResponseBody
+	public JsonResult doDownload(){
+		return new JsonResult("downloading");
+	}
+	
 	@RequestMapping("/export")
 	@ResponseBody
 	public JsonResult doExportUser(HttpServletResponse response) throws Exception{
 		response.setContentType("application/binary;charset=UTF-8");
 		String fileName="userInfo"+new String(new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date()).getBytes(), "utf-8");
-		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");
 		ServletOutputStream out = response.getOutputStream();
 		Workbook workbook = sysUserService.findObjects(out);
 	    return new JsonResult("export success");

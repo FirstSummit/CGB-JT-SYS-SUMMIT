@@ -90,6 +90,22 @@
 		<artifactId>aspectjweaver</artifactId>
 		<version>1.8.9</version>
   </dependency>
-  
+  <!-- 添加apache poi依赖 -->
+	<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>3.14</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>3.14</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml-schemas</artifactId>
+    <version>3.14</version>
+</dependency>
  </dependencies>
 </project>

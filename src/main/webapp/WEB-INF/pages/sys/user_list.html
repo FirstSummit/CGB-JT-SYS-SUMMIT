@@ -15,6 +15,7 @@
 							</button>
 							<button type="button" class="btn btn-default btn-add">添加</button>
 							<button type="button" class="btn btn-default btn-update">修改</button>
+							<button type="button" class="btn btn-default btn-download">下载</button>
 						</div>
 					</div>
 				</div>
@@ -51,10 +52,33 @@
 	   });
 	   $(".input-group-btn")
 	   .on("click",".btn-search",doQueryObjects)
-	   .on("click",".btn-add,.btn-update",doAddOrUpdate);
+	   .on("click",".btn-add,.btn-update",doAddOrUpdate)
+	   .on("click",".btn-download",doDownloadObject);
 	   $("tbody").on("click",".btn-valid",doValidById);
    });
    
+   function doDownloadObject(){
+		$.ajax({
+			url:"user/doDownload.do",
+			success:function(result){
+				if(result.state==1){
+					document.location.href=getRootPath()+"/user/export.do";
+				}else{
+					alert(result.message)
+				}
+			}
+		});
+	}
+	
+	function getRootPath(){  
+	   
+	    //获取主机地址之后的目录，如： proj/meun.jsp  
+	    var pathName = window.document.location.pathname;  
+	    //获取带"/"的项目名，如：/proj  
+	    var projectName = pathName.substring(0, pathName.substr(1).indexOf('/')+1);  
+	    return projectName;  
+	}
+	
    function doAddOrUpdate(){
 	   //1.判定点击的对象
 	   var title;

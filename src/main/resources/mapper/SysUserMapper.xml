@@ -105,7 +105,9 @@
            from sys_users
            <include refid="pageWhere"/>
      </select>
-   
+      <select id="findObjects" resultType="com.jt.sys.entity.SysUser">
+   		select * from sys_users 
+   </select>
 </mapper>
 
 
