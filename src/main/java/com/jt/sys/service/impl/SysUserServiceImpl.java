@@ -2,6 +2,7 @@ package com.jt.sys.service.impl;
 
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -269,7 +270,19 @@ public class SysUserServiceImpl implements SysUserService {
         //设置单元格格式保存日期
         CellStyle cellStyle3 = workbook.createCellStyle();
         cellStyle3.setDataFormat(format.getFormat("yyyy-MM-dd HH:mm:ss"));
+        
         //创建表头
+       Field[] fields =createHeader(sheet, sysUsers, cellStyle);
+       //插入数据
+       createBody(sheet, sysUsers, fields, cellStyle2, cellStyle3);
+       workbook.write(out);
+       out.close();
+       return workbook;
+	}
+	
+	// 创建表头
+	public  Field[] createHeader(Sheet sheet,List<SysUser> sysUsers,CellStyle cellStyle){
+		 
         Cell head = sheet.createRow(0).createCell(0);
         head.setCellValue("user list");
         head.setCellStyle(cellStyle);
@@ -288,32 +301,32 @@ public class SysUserServiceImpl implements SysUserService {
     	   cell.setCellValue(name);
     	   cell.setCellStyle(cellStyle);
        }
-       
-       //插入数据
-       for(int i =0;i<sysUsers.size();i++){
-    	   SysUser sysUser = sysUsers.get(i);
-    	   row = sheet.createRow(2+i);
-    	   for(int j=1; j<fields.length;j++){
-    		   Cell cell = row.createCell(j-1);
-    		   Field field = fields[j];
-    		   String name = field.getName();
-    		   name ="get"+name.substring(0, 1).toUpperCase().concat(name.substring(1));
-    		   Object value = sysUser.getClass().getMethod(name).invoke(sysUser);
-    		   System.out.println(field.getType());
-    		   if(field.getType()==String.class && value!=null){
-    			   cell.setCellValue((String)value);
-    		   }else if(field.getType()==Integer.class && value!=null){
-    			   cell.setCellValue((Integer)value);
-    			   cell.setCellStyle(cellStyle2);
-    		   }else if(field.getType()==Date.class && value!=null){
-    			   System.out.println(value);
-    			   cell.setCellValue((Date)value);
-    			   cell.setCellStyle(cellStyle3);
-    		   }
-    	   }
-       }
-       workbook.write(out);
-       out.close();
-       return workbook;
+       return fields;
+	}
+	
+	//插入数据
+	public void createBody(Sheet sheet,List<SysUser> sysUsers,Field[] fields,CellStyle cellStyle2,CellStyle cellStyle3) throws Exception{
+		for(int i =0;i<sysUsers.size();i++){
+	    	   SysUser sysUser = sysUsers.get(i);
+	    	   Row row = sheet.createRow(2+i);
+	    	   for(int j=1; j<fields.length;j++){
+	    		   Cell cell = row.createCell(j-1);
+	    		   Field field = fields[j];
+	    		   String name = field.getName();
+	    		   name ="get"+name.substring(0, 1).toUpperCase().concat(name.substring(1));
+	    		   Object value = sysUser.getClass().getMethod(name).invoke(sysUser);
+	    		   System.out.println(field.getType());
+	    		   if(field.getType()==String.class && value!=null){
+	    			   cell.setCellValue((String)value);
+	    		   }else if(field.getType()==Integer.class && value!=null){
+	    			   cell.setCellValue((Integer)value);
+	    			   cell.setCellStyle(cellStyle2);
+	    		   }else if(field.getType()==Date.class && value!=null){
+	    			   System.out.println(value);
+	    			   cell.setCellValue((Date)value);
+	    			   cell.setCellStyle(cellStyle3);
+	    		   }
+	    	   }
+	       }
 	}
 }
