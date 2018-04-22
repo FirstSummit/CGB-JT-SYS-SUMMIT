@@ -42,4 +42,7 @@ public interface SysUserDao {
 			@Param("username")String username);
 	int validById(@Param("id")Integer id,
 			      @Param("valid")Integer valid);
+	
+	// 查询所有的用户信息
+	List<SysUser> findObjects();
 }

@@ -1,5 +1,12 @@
 package com.jt.sys.controller;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,6 +81,15 @@ public class SysUserController {
 		return new JsonResult(pageObject);
 	}
 	
-	
+	@RequestMapping("/export")
+	@ResponseBody
+	public JsonResult doExportUser(HttpServletResponse response) throws Exception{
+		response.setContentType("application/binary;charset=UTF-8");
+		String fileName="userInfo"+new String(new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date()).getBytes(), "utf-8");
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+		ServletOutputStream out = response.getOutputStream();
+		Workbook workbook = sysUserService.findObjects(out);
+	    return new JsonResult("export success");
+	}
 	
 }
