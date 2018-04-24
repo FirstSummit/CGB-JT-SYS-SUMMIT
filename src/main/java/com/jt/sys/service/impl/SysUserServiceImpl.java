@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.View;
+
 import com.jt.common.exception.ServiceException;
 import com.jt.common.vo.CheckBox;
 import com.jt.common.vo.PageObject;
@@ -36,6 +38,7 @@ import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.dao.SysUserRoleDao;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.service.SysUserService;
+import com.jt.sys.service.UserPdfView;
 @Service
 public class SysUserServiceImpl implements SysUserService {
 	
@@ -328,5 +331,15 @@ public class SysUserServiceImpl implements SysUserService {
 	    		   }
 	    	   }
 	       }
+	}
+	
+	@Override
+	public View findObjectsPdf() {
+		List<SysUser> sysUsers = sysUserDao.findObjects();
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("sysUsers", sysUsers);
+		UserPdfView pdf = new UserPdfView();
+		pdf.setAttributesMap(map);
+		return pdf;
 	}
 }

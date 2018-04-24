@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
+
 import com.jt.common.vo.JsonResult;
 import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysUser;
@@ -98,4 +101,15 @@ public class SysUserController {
 	    return new JsonResult("export success");
 	}
 	
+	@RequestMapping("/exportPDF")
+	@ResponseBody
+	public ModelAndView doExportPdfUser(HttpServletResponse response)throws Exception{
+		String fileName="userInfo"+new String(
+				new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(
+						new Date()).getBytes(), "utf-8");
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".pdf");
+		View view = sysUserService.findObjectsPdf();
+		ModelAndView mv = new ModelAndView(view);
+		return mv;
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.servlet.View;
 
 import com.jt.common.vo.CheckBox;
 import com.jt.common.vo.PageObject;
@@ -39,4 +40,6 @@ public interface SysUserService {
 	   
 	   
 	   Workbook  findObjects(OutputStream out) throws Exception;
+	   
+	   View findObjectsPdf() throws Exception;
 }
