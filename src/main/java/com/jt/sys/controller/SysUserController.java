@@ -92,10 +92,10 @@ public class SysUserController {
 	
 	@RequestMapping("/export")
 	@ResponseBody
-	public JsonResult doExportUser(HttpServletResponse response) throws Exception{
+	public JsonResult doExportUser(HttpServletResponse response,String fileName) throws Exception{
 		response.setContentType("application/binary;charset=UTF-8");
-		String fileName="userInfo"+new String(new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date()).getBytes(), "utf-8");
-		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");
+		response.setHeader("Content-disposition", "attachment; filename=" + 
+		new String(fileName.getBytes("utf-8"),"iso-8859-1") + ".xlsx");
 		ServletOutputStream out = response.getOutputStream();
 		Workbook workbook = sysUserService.findObjects(out);
 	    return new JsonResult("export success");
@@ -103,11 +103,10 @@ public class SysUserController {
 	
 	@RequestMapping("/exportPDF")
 	@ResponseBody
-	public ModelAndView doExportPdfUser(HttpServletResponse response)throws Exception{
-		String fileName="userInfo"+new String(
-				new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(
-						new Date()).getBytes(), "utf-8");
-		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".pdf");
+	public ModelAndView doExportPdfUser(HttpServletResponse response,String fileName)throws Exception{
+		
+		response.setHeader("Content-disposition", "attachment; filename=" + 
+						new String(fileName.getBytes("utf-8"),"iso-8859-1") + ".pdf");
 		View view = sysUserService.findObjectsPdf();
 		ModelAndView mv = new ModelAndView(view);
 		return mv;

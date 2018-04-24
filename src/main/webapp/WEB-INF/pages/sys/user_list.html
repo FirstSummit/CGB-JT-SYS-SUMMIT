@@ -15,7 +15,7 @@
 							</button>
 							<button type="button" class="btn btn-default btn-add">添加</button>
 							<button type="button" class="btn btn-default btn-update">修改</button>
-							<button type="button" class="btn btn-default btn-download">下载</button>
+							<button type="button" class="btn btn-default btn-download" data-toggle="modal" data-target="#myModal">下载</button>
 						</div>
 					</div>
 				</div>
@@ -45,6 +45,36 @@
 		<!-- /.box -->
 	</div>
 </div>
+
+<!-- 加模态框 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					请选择下载格式
+				</h4> 
+			</div>
+			<div class="modal-body">
+				请输入文件名<input id="fileName" type="text"/>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary btn-primary-download" value="pdf">
+					下载pdf
+				</button>
+				<button type="button" class="btn btn-primary btn-primary-download" value="excel">
+					下载excel
+				</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
 <script type="text/javascript">
    $(document).ready(function(){
 	   $("#pageId").load("pageUI.do",function(){
@@ -53,16 +83,30 @@
 	   $(".input-group-btn")
 	   .on("click",".btn-search",doQueryObjects)
 	   .on("click",".btn-add,.btn-update",doAddOrUpdate)
-	   .on("click",".btn-download",doDownloadObject);
+	
+	   $(".modal-footer")
+	  	.on("click",".btn-primary-download",doDownloadObject);
+	  	
 	   $("tbody").on("click",".btn-valid",doValidById);
    });
    
    function doDownloadObject(){
+		$("#myModal").modal("hide");
+		var type = $(this).val();
+		console.log(type);
+		var fileName=$("#fileName").val();
+		$("#fileName").prop("value","");
 		$.ajax({
 			url:"user/doDownload.do",
 			success:function(result){
 				if(result.state==1){
-					document.location.href=getRootPath()+"/user/export.do";
+					if("excel"==type){
+					document.location.href=getRootPath()+"/user/export.do?fileName="+fileName;
+					alert("导出成功");
+					}else{
+					document.location.href=getRootPath()+"/user/exportPDF.do?fileName="+fileName;
+					alert("导出成功");
+					}
 				}else{
 					alert(result.message)
 				}
