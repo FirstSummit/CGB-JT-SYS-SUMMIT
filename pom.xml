@@ -122,5 +122,12 @@
 	<systemPath>${basedir}/resource/iTextAsian.jar</systemPath>
 	<!-- <systemPath>D:/EclipseWorkspace/SSM-itext/src/main/webapp/resource/iTextAsian.jar</systemPath> -->
 </dependency>
+<!-- 添加pageHelper分页插件依赖包-->
+    <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper</artifactId>
+        <version>5.0.2</version>
+</dependency>
+
  </dependencies>
 </project>

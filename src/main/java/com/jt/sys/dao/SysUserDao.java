@@ -35,11 +35,11 @@ public interface SysUserDao {
 	 */
 	SysUser findObjectById(Integer id);
 	int insertObject(SysUser entity);
-	int getRowCount(@Param("username")String username);
+	
 	List<SysUser> findPageObjects(
-			@Param("startIndex")Integer startIndex,
-			@Param("pageSize")Integer pageSize,
-			@Param("username")String username);
+			@Param("username")String username,
+			@Param("pageCurrent")Integer startIndex);
+	
 	int validById(@Param("id")Integer id,
 			      @Param("valid")Integer valid);
 	

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.JsonResult;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysRole;
 import com.jt.sys.service.SysRoleService;
 
@@ -54,9 +54,9 @@ public class SysRoleController {
     @ResponseBody
 	public JsonResult doFindPageObjects(
 			Integer pageCurrent,String name){
-         PageObject<SysRole> pageObject=
+         PageInfo<SysRole> info=
 		 sysRoleService.findPageObjects(pageCurrent,name);
-		 return new JsonResult(pageObject);
+		 return new JsonResult(info);
 	}
     @RequestMapping("doDeleteObject")
     @ResponseBody

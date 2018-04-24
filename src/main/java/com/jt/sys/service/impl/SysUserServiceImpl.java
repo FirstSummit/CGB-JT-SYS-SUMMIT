@@ -30,9 +30,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
 import com.jt.common.vo.CheckBox;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.dao.SysRoleDao;
 import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.dao.SysUserRoleDao;
@@ -211,28 +212,12 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	@Override
-	public PageObject<SysUser> findPageObjects(
-			Integer pageCurrent, 
-			String username) {
-		//1.查询总记录数
-		int rowCount=
-		sysUserDao.getRowCount(username);
-		//2.查询当前页记录
-		int pageSize=3;
-		if(pageCurrent==null||pageCurrent<1)
-		throw new ServiceException("当前页码不正确");
-		int startIndex=(pageCurrent-1)*pageSize;
-		List<SysUser> list=sysUserDao.findPageObjects(
-				startIndex,
-				pageSize, username);
-		//3.封装数据
-		PageObject<SysUser> pageObject=new PageObject<>();
-		pageObject.setRecords(list);
-		pageObject.setRowCount(rowCount);
-		pageObject.setPageSize(pageSize);
-		pageObject.setPageCurrent(pageCurrent);
-		//4.返回数据
-		return pageObject;
+	public PageInfo<SysUser> findPageObjects(
+			Integer pageCurrent,String username) {
+		PageHelper.startPage(pageCurrent, 5);
+		List<SysUser> list = sysUserDao.findPageObjects(username, pageCurrent);
+		PageInfo<SysUser> info=new PageInfo<>(list,5);
+		return info;
 	}
 	
 	@Override

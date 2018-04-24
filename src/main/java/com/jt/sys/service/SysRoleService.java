@@ -1,7 +1,7 @@
 package com.jt.sys.service;
 import java.util.Map;
 
-import com.jt.common.vo.PageObject;
+import com.github.pagehelper.PageInfo;
 import com.jt.sys.entity.SysRole;
 public interface SysRoleService {
 	 /**
@@ -9,8 +9,8 @@ public interface SysRoleService {
 	  * @param pageCurrent (当前页码)
 	  * @return
 	  */
-	 PageObject<SysRole> findPageObjects(
-			 Integer pageCurrent,String name);
+	 PageInfo<SysRole> findPageObjects(
+			 Integer pageCurrent, String name);
 
 	 int deleteObject(String idStr);
 	 int saveObject(SysRole entity,String menuIds);

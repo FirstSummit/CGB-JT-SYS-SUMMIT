@@ -57,7 +57,6 @@
        from sys_roles
        <include refid="pageWhere"/>
        order by createdTime desc
-       limit #{startIndex},#{pageSize}
     </select>
     
     <select id="getRowCount"

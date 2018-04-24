@@ -187,7 +187,7 @@
 		   data:params,
 		   success:function(result){
 			 if(result.state==1){
-			   setTableBodyRows(result.data.records);
+			   setTableBodyRows(result.data.list);
 			   setPagination(result.data)
 			 }else{
 			   alert(result.message);

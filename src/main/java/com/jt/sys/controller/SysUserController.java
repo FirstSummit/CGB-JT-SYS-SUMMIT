@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
+import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.JsonResult;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.service.SysUserService;
 
@@ -79,9 +79,9 @@ public class SysUserController {
 	@ResponseBody
 	public JsonResult doFindPageObjects(
 			Integer pageCurrent,String username){
-		PageObject<SysUser> pageObject=
+		PageInfo<SysUser> info=
 		sysUserService.findPageObjects(pageCurrent, username);
-		return new JsonResult(pageObject);
+		return new JsonResult(info);
 	}
 	
 	@RequestMapping("doDownload")

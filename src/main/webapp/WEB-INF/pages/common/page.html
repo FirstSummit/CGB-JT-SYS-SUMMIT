@@ -13,14 +13,14 @@
    //设置分页
    function setPagination(data){
 	   //1.初始化总页数
-	   $(".pageCount").html("总页数("+data.pageCount+")");
+	   $(".pageCount").html("总页数("+data.pages+")");
 	   //2.初始化总记录数
-	   $(".rowCount").html("总记录数("+data.rowCount+")");
+	   $(".rowCount").html("总记录数("+data.total+")");
 	   //3.初始化当前页页码
-	   $(".pageCurrent").html("当前页("+data.pageCurrent+")");
+	   $(".pageCurrent").html("当前页("+data.pageNum+")");
 	   //4.绑定数据
-	   $(".pagination").data("pageCurrent",data.pageCurrent);
-	   $(".pagination").data("pageCount",data.pageCount);
+	   $(".pagination").data("pageCurrent",data.pageNum);
+	   $(".pagination").data("pageCount",data.total);
    }
    function doJumpToPage(){
 	   //1.获取当前页码以及总页数

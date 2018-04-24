@@ -7,8 +7,8 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.servlet.View;
 
+import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.CheckBox;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysUser;
 
 public interface SysUserService {
@@ -32,7 +32,7 @@ public interface SysUserService {
 	
 	   List<CheckBox> findRoles();
 	
-	   PageObject<SysUser> findPageObjects(
+	   PageInfo<SysUser> findPageObjects(
 			   Integer pageCurrent,
 			   String username);
 	   

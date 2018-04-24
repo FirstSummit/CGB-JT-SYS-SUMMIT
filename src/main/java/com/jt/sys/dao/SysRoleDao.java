@@ -9,12 +9,8 @@ public interface SysRoleDao {
 	List<CheckBox> findObjects();
 	/**获取当前页数据*/
 	List<SysRole> findPageObjects(
-			@Param("startIndex") int startIndex,
-			@Param("pageSize") int pageSize,
-			@Param("name") String name);//limit #{startIndex},#{pageSize};
-	/**获取总记录数*/
-	int getRowCount(@Param("name")String name);
-	
+			@Param("pageCurrent") int pageCurrent,
+			@Param("name") String name);
 	
 	/**添加删除功能*/
 	int deleteObject(@Param("ids") String[] ids);

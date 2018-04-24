@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
-import com.jt.common.util.ShiroUtils;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.dao.SysRoleDao;
 import com.jt.sys.dao.SysRoleMenuDao;
 import com.jt.sys.dao.SysUserRoleDao;
@@ -100,36 +100,12 @@ public class SysRoleServiceImpl implements SysRoleService{
     	return rows;
     }
 	@Override
-	public PageObject<SysRole> findPageObjects(
+	public PageInfo<SysRole> findPageObjects(
 			Integer pageCurrent,String name) {
-		//1.查询总记录数
-		int rowCount=sysRoleDao.getRowCount(name);
-		if(rowCount==0)
-		throw new ServiceException("没有记录");
-	    //2.查询当前页记录
-		//2.1定义页面大小(每页最多现实多少条记录)
-		int pageSize=3;
-		//2.2计算当前页位置
-		if(pageCurrent==null||pageCurrent<=0)
-		throw new ServiceException("当前页码不合法");
-		int startIndex=(pageCurrent-1)*pageSize;
-		//2.3查询当前数据
-		List<SysRole> list=
-		sysRoleDao.findPageObjects(startIndex,pageSize,name);
-		//3.封装数据
-		PageObject<SysRole> pageObject
-		=new PageObject<>();
-		pageObject.setRecords(list);
-		pageObject.setRowCount(rowCount);
-		pageObject.setPageSize(pageSize);
-		pageObject.setPageCurrent(pageCurrent);
-		/*		
-		如下这段代码提取到了PageObject类的getPageCount方法中了
-		目的是实现代码复用
-		int pageCount=rowCount/pageSize;
-		if(rowCount%pageSize!=0)pageCount++;
-		pageObject.setPageCount(pageCount);*/
-		return pageObject;
+	      PageHelper.startPage(pageCurrent, 5);
+	      List<SysRole> list = sysRoleDao.findPageObjects(pageCurrent, name);
+		PageInfo<SysRole> info=new PageInfo<>(list,5);
+		return info;
 	}
 	@RequiresPermissions("sys:role:delete")
 	@Override

@@ -201,7 +201,7 @@
 	   console.log(params);
 	   $.getJSON(url,params,function(result){
 		   if(result.state==1){
-			  setTableBodyRows(result.data.records);
+			  setTableBodyRows(result.data.list);
 			  setPagination(result.data);
 		   }else{
 			  alert(result.message);
