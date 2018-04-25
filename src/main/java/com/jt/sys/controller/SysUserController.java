@@ -1,4 +1,6 @@
 package com.jt.sys.controller;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -91,9 +93,15 @@ public class SysUserController {
 	@RequestMapping("/export")
 	@ResponseBody
 	public JsonResult doExportUser(HttpServletResponse response,String fileName) throws Exception{
+		if(fileName==""){
+			System.out.println("filename"+fileName);
+			fileName = new String(
+					new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(
+							new Date()).getBytes(), "iso-8859-1");
+		}
 		response.setContentType("application/binary;charset=UTF-8");
 		response.setHeader("Content-disposition", "attachment; filename=" + 
-		new String(fileName.getBytes("utf-8"),"iso-8859-1") + ".xlsx");
+		fileName + ".xlsx");
 		ServletOutputStream out = response.getOutputStream();
 		Workbook workbook = sysUserService.findObjects(out);
 	    return new JsonResult("export success");
@@ -102,9 +110,15 @@ public class SysUserController {
 	@RequestMapping("/exportPDF")
 	@ResponseBody
 	public ModelAndView doExportPdfUser(HttpServletResponse response,String fileName)throws Exception{
-		
+		System.out.println(fileName);
+		if(fileName==""){
+			fileName = new String(
+					new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(
+							new Date()).getBytes(), "iso-8859-1");
+		}
+		System.out.println(fileName);
 		response.setHeader("Content-disposition", "attachment; filename=" + 
-						new String(fileName.getBytes("utf-8"),"iso-8859-1") + ".pdf");
+						fileName + ".pdf");
 		View view = sysUserService.findObjectsPdf();
 		ModelAndView mv = new ModelAndView(view);
 		return mv;
