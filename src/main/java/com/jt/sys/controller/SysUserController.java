@@ -116,7 +116,6 @@ public class SysUserController {
 					new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(
 							new Date()).getBytes(), "iso-8859-1");
 		}
-		System.out.println(fileName);
 		response.setHeader("Content-disposition", "attachment; filename=" + 
 						fileName + ".pdf");
 		View view = sysUserService.findObjectsPdf();

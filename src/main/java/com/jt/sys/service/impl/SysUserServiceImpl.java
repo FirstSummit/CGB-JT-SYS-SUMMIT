@@ -266,8 +266,8 @@ public class SysUserServiceImpl implements SysUserService {
 	public Workbook findObjects(OutputStream out) throws Exception {
 		//查询获取所有的用户信息
 		List<SysUser> sysUsers = sysUserDao.findObjects();
-		System.out.println("********"+sysUsers.get(0).getModifiedTime());
-		
+		if(sysUsers==null || sysUsers.size()==0)
+			throw new ServiceException("查询结果为空");
 		Workbook workbook = ExcelUtil.creatExcel("userdata", sysUsers);
 		workbook.write(out);
 		out.close();
@@ -278,6 +278,8 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
 	public View findObjectsPdf() {
 		List<SysUser> sysUsers = sysUserDao.findObjects();
+		if(sysUsers==null || sysUsers.size()==0)
+			throw new ServiceException("查询结果为空");
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("sysUsers", sysUsers);
 		UserPdfView pdf = new UserPdfView();

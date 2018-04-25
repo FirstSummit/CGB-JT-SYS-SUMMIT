@@ -65,6 +65,7 @@ public class ExcelUtil {
     	   cell.setCellValue(name);
     	   cell.setCellStyle(cellStyle);
        }
+       
        //插入数据
        for(int i =0;i<list.size();i++){
     	   T t = list.get(i);
