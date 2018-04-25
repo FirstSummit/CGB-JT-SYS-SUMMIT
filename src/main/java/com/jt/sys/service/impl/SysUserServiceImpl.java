@@ -32,6 +32,7 @@ import org.springframework.web.servlet.View;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
+import com.jt.common.util.ExcelUtil;
 import com.jt.common.util.ShiroUtils;
 import com.jt.common.vo.CheckBox;
 import com.jt.sys.dao.SysRoleDao;
@@ -267,97 +268,12 @@ public class SysUserServiceImpl implements SysUserService {
 		List<SysUser> sysUsers = sysUserDao.findObjects();
 		System.out.println("********"+sysUsers.get(0).getModifiedTime());
 		
-		//创建一个workbook
-		Workbook workbook = new XSSFWorkbook();	
-		//得到一个POI工具类
-		//CreationHelper helper = workbook.getCreationHelper();
-		// 在Excel工作簿中建一工作表，其名为缺省值, 也可以指定Sheet名称
-        Sheet sheet = workbook.createSheet("userdata");
-        // 用于格式化单元格的数据
-        DataFormat format = workbook.createDataFormat();
-        
-        // 设置字体
-        Font font = workbook.createFont();
-        font.setFontHeightInPoints((short) 20); // 字体高度
-        font.setColor(Font.COLOR_NORMAL); // 字体颜色
-        font.setFontName("黑体"); // 字体
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD); // 宽度
-        //font.setItalic(true); // 是否使用斜体
-        // font.setStrikeout(true); //是否使用划线
-        
-        // 设置单元格类型保存文字
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setFont(font);
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER); // 水平布局：居中
-        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER); // 垂直居中
-        cellStyle.setWrapText(true);  // 自动换行?
-        
-        //设置单元格格式保存数字?
-        CellStyle cellStyle2 = workbook.createCellStyle();
-        cellStyle2.setDataFormat(format.getFormat("＃,##0.0"));
-        
-        //设置单元格格式保存日期
-        CellStyle cellStyle3 = workbook.createCellStyle();
-        cellStyle3.setDataFormat(format.getFormat("yyyy-MM-dd HH:mm:ss"));
-        
-        //创建表头
-       Field[] fields =createHeader(sheet, sysUsers, cellStyle);
-       //插入数据
-       createBody(sheet, sysUsers, fields, cellStyle2, cellStyle3);
-       workbook.write(out);
-       out.close();
-       return workbook;
+		Workbook workbook = ExcelUtil.creatExcel("userdata", sysUsers);
+		workbook.write(out);
+		out.close();
+		return workbook;
 	}
-	
-	// 创建表头
-	public  Field[] createHeader(Sheet sheet,List<SysUser> sysUsers,CellStyle cellStyle){
-		 
-        Cell head = sheet.createRow(0).createCell(0);
-        head.setCellValue("user list");
-        head.setCellStyle(cellStyle);
-        Row row = sheet.createRow(1);
-        Field[] fields = sysUsers.get(0).getClass().getDeclaredFields();
-        Field[] fields1 = sysUsers.get(0).getClass().getSuperclass().getDeclaredFields();
-        int len=fields.length;
-        fields=Arrays.copyOf(fields, len+fields1.length);
-        System.out.println(Arrays.toString(fields));
-        System.arraycopy(fields1, 0, fields, len, fields1.length);
-       for(int i=1; i<fields.length;i++){
-    	   System.out.println(fields[i]);
-    	   Cell cell = row.createCell(i-1);
-    	   String name = fields[i].getName();
-    	   System.out.println(name);
-    	   cell.setCellValue(name);
-    	   cell.setCellStyle(cellStyle);
-       }
-       return fields;
-	}
-	
-	//插入数据
-	public void createBody(Sheet sheet,List<SysUser> sysUsers,Field[] fields,CellStyle cellStyle2,CellStyle cellStyle3) throws Exception{
-		for(int i =0;i<sysUsers.size();i++){
-	    	   SysUser sysUser = sysUsers.get(i);
-	    	   Row row = sheet.createRow(2+i);
-	    	   for(int j=1; j<fields.length;j++){
-	    		   Cell cell = row.createCell(j-1);
-	    		   Field field = fields[j];
-	    		   String name = field.getName();
-	    		   name ="get"+name.substring(0, 1).toUpperCase().concat(name.substring(1));
-	    		   Object value = sysUser.getClass().getMethod(name).invoke(sysUser);
-	    		   System.out.println(field.getType());
-	    		   if(field.getType()==String.class && value!=null){
-	    			   cell.setCellValue((String)value);
-	    		   }else if(field.getType()==Integer.class && value!=null){
-	    			   cell.setCellValue((Integer)value);
-	    			   cell.setCellStyle(cellStyle2);
-	    		   }else if(field.getType()==Date.class && value!=null){
-	    			   System.out.println(value);
-	    			   cell.setCellValue((Date)value);
-	    			   cell.setCellStyle(cellStyle3);
-	    		   }
-	    	   }
-	       }
-	}
+
 	
 	@Override
 	public View findObjectsPdf() {

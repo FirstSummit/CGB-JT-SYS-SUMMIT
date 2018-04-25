@@ -50,10 +50,10 @@ public class PDFUtil {
 	}
 	
 	// 根据传入的数据制作表格
-	//制作表格标题
-	public static <T> PdfPTable createPDF(List<T> sysUsers) throws Exception{
-		Field[] fields = sysUsers.get(0).getClass().getDeclaredFields();
-	    Field[] fields1 = sysUsers.get(0).getClass().getSuperclass().getDeclaredFields();
+	// 制作表格标题
+	public static <T> PdfPTable createPDF(List<T> list) throws Exception{
+		Field[] fields = list.get(0).getClass().getDeclaredFields();
+	    Field[] fields1 = list.get(0).getClass().getSuperclass().getDeclaredFields();
 	    fields= Arrays.copyOfRange(fields, 1, fields.length);
 	    int len=fields.length;
 	    fields=Arrays.copyOf(fields, len+fields1.length);
@@ -68,7 +68,7 @@ public class PDFUtil {
 			table.addCell(getParagraph(field.getName()));
 		}
 		//创建body
-		for (T t : sysUsers) {
+		for (T t : list) {
 			for (Field field : fields) {
 				String name = field.getName();
 	    		name ="get"+name.substring(0, 1).toUpperCase().concat(name.substring(1));
