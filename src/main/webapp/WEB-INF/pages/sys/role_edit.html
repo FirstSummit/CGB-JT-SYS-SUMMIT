@@ -36,25 +36,38 @@
         <!-- /.box-footer -->
       </form>
     </div>
+    <!-- 在页面中添加对zTree的js及css引用 -->
     <script type="text/javascript" src="bower_components/ztree/jquery.ztree.all.min.js"></script>
     <script type="text/javascript">
+         /*  配置ztree参数，ztree采用json格式，
+             按照配置的类型分为view（可视界面相关配置）、data（数据相关配置）、
+    check（复选框相关配置）、callback（各类事件的回调函数配置）、
+    async（zTree异步加载配置） */
     var ztree; 
     var setting = {
-   	data : {
+    		
+    /*  view: {
+       selectedMulti: true, //设置是否能够同时选中多个节点，默认情况为true
+       showIcon: true, //设置是否显示节点图标
+    	showLine: true, //设置是否显示节点与节点之间的连线
+        showTitle: true, //设置是否显示节点的title提示信息
+    	  }, */
+   	data : {      //数据配置
    	    simpleData : {
-   			enable : true,
+   			enable : true,//zTree支持json格式跟简单数据格式
    			idKey : "id",  //节点数据中保存唯一标识的属性名称
    			pIdKey : "parentId",  //节点数据中保存其父节点唯一标识的属性名称
    			rootPId : null  //根节点id
    		}
    	},
+   	<!--复选框配置-->
    	check:{
-   		enable:true,
+   		enable:true,//设置显示复选框
    		nocheckInherit:true
    	}
     }
     $(function(){
-    	doLoadSysMenus();
+    	doLoadSysMenus();    //页面加载ztree方法
     	$(".box-footer")
     	.on("click",".btn-cancel",doCancel)
     	.on("click",".btn-save",doSaveOrUpdate);
@@ -62,24 +75,21 @@
     });
  
     //页面加载完成初始化zTree
-    function doLoadSysMenus(){
-    	var url="menu/doFindZTreeNodes.do"
-        	$.getJSON(url,function(result){
-        		if(result.state==1){
-        		ztree=$.fn.zTree.init(
+    function doLoadSysMenus(){    
+    	var url="menu/doFindZTreeNodes.do"    //执行方法的路径
+        	$.getJSON(url,function(result){   //get请求加载
+        		if(result.state==1){//状态正常
+        		ztree=$.fn.zTree.init(//创建ztree并初始化
         		$("#menuTree"),setting,result.data);
         		var data=$(".container-fluid").data("data");
-            	if(data){
+            	if(data){//如果存在执行初始化加载表单数据
             		doInitEditForm(data);
             	}
-        		}else{
+        		}else{//异常的话的页面弹出异常信息
         		alert(result.message);
         		}
         	})
     }
-    
-    
-    
     
     //初始化表单数据
     function doInitEditForm(data){
@@ -134,8 +144,7 @@
     	}
     	//获取选中的node节点
     	var menuIds=[];
-    	var checkedNodes=
-    	ztree.getCheckedNodes(true);
+    	var checkedNodes=ztree.getCheckedNodes(true);
     	for(var i in checkedNodes){
     		menuIds.push(checkedNodes[i].id)
     	}
