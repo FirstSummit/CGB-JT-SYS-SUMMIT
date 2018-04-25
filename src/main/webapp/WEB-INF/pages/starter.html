@@ -258,14 +258,10 @@ desired effect
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#">组织管理</a></li>
+            <li><a id="load-department-id">部门管理</a></li>
             <li><a id="load-menu-id">菜单管理</a></li>
             <li><a id="load-role-id">角色管理</a></li>
             <li><a id="load-user-id">用户管理</a></li>
-            <li><a id="load-log-id">日志管理</a></li>
-            <li><a id="load-task-id">任务管理</a></li>
-            <li><a id="load-config-id">配置管理</a></li>
-            <li><a id="load-dict-id">字典管理</a></li>
           </ul>
         </li>
       </ul>
@@ -409,6 +405,11 @@ desired effect
     	 })
     	 $("#load-menu-id").click(function(){
     	   $(".container-fluid").load("menu/listUI.do",function(){
+    		   $(".container-fluid").removeData();
+    	   });//t=Math.random();
+    	 })
+    	 $("#load-department-id").click(function(){
+    	   $(".container-fluid").load("department/listUI.do",function(){
     		   $(".container-fluid").removeData();
     	   });//t=Math.random();
     	 })

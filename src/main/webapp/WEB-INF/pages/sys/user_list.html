@@ -29,6 +29,7 @@
 							<th>用户名</th>
 							<th>邮箱</th>
 							<th>手机号</th>
+							<th>所属部门</th>
 							<th>状态</th>
 							<th>创建时间</th>
 							<th>修改时间</th>
@@ -89,7 +90,19 @@
 	  	
 	   $("tbody").on("click",".btn-valid",doValidById);
    });
-   
+   function findDepartment(id){
+	   var departmentName;
+	   $.ajax({
+		   url:"department/doFindDepartmentNameByUserId.do",
+		   data:{"id":id},
+		   async:false,
+		   dataType:"json",
+		   success:function(result){
+			   departmentName=result.data;
+		   }
+	   });
+	   return departmentName;
+   }
    function doDownloadObject(){
 		$("#myModal").modal("hide");
 		var type = $(this).val();
@@ -210,11 +223,17 @@
    }
    //通过服务端返回的数据初始化页面
    function setTableBodyRows(data){
+	   
 	  //1.获取tbody对象，并清空内容
 	  var tBody=$("#tbodyId");
 	  tBody.empty();
 	  //2.迭代data内容将数据追加到tbody中
 	  for(var i in data){
+		  var departmentName = findDepartment(data[i].id);
+		  
+		   if(!departmentName){
+			   departmentName="暂无部门";
+		   }
 		  var tr=$("<tr></tr>");
 		  tr.data("id",data[i].id);
 		  tr.data("valid",data[i].valid);
@@ -222,6 +241,7 @@
 		     "<td>"+data[i].username+"</td>"+
 		     "<td>"+data[i].email+"</td>"+
 		     "<td>"+data[i].mobile+"</td>"+
+		     "<td>"+departmentName+"</td>"+
 		     "<td>"+(data[i].valid?"启用":"禁用")+"</td>"+
 		     "<td>"+data[i].createdTime+"</td>"+
 		     "<td>"+data[i].modifiedTime+"</td>"+

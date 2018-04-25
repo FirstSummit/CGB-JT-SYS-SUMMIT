@@ -2,7 +2,6 @@ package com.jt.sys.service.impl;
 
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;
@@ -34,9 +32,11 @@ import org.springframework.web.servlet.View;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
+import com.jt.common.util.ShiroUtils;
 import com.jt.common.vo.CheckBox;
 import com.jt.sys.dao.SysRoleDao;
 import com.jt.sys.dao.SysUserDao;
+import com.jt.sys.dao.SysUserDepartmentDao;
 import com.jt.sys.dao.SysUserRoleDao;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.service.SysUserService;
@@ -44,7 +44,8 @@ import com.jt.sys.service.UserPdfView;
 import com.jt.sys.token.DefindToken;
 @Service
 public class SysUserServiceImpl implements SysUserService {
-	
+	@Autowired
+	private SysUserDepartmentDao sysUserDepartmentDao;
 	@Autowired
 	private SysUserDao sysUserDao;
 	@Autowired
@@ -113,7 +114,7 @@ public class SysUserServiceImpl implements SysUserService {
 	
 	
 	@Override
-	public void updateObject(SysUser entity,String roleIds) {
+	public void updateObject(SysUser entity,String roleIds,Integer departmentId,Integer oldDepartmentId) {
         
 		//1.对数据进行合法验证
 		if (entity == null)
@@ -133,6 +134,7 @@ public class SysUserServiceImpl implements SysUserService {
 		String newPwd=sHash.toString();
 		entity.setSalt(salt);
 		entity.setPassword(newPwd);
+		entity.setModifiedUser(ShiroUtils.getPrincipal().getUsername());
 		}
 		//2.2更新数据
 		try{
@@ -152,6 +154,7 @@ public class SysUserServiceImpl implements SysUserService {
 		throw new ServiceException("数据不合法,id="+id);
 		//2.查询用户信息
 		SysUser user=sysUserDao.findObjectById(id);
+		int departmentId = sysUserDepartmentDao.findDepartmentIdByUserId(id);
 		if(user==null)
 		throw new ServiceException("用户已经不存在");
 		//3.查询用户角色
@@ -159,6 +162,7 @@ public class SysUserServiceImpl implements SysUserService {
 		sysUserRoleDao.findRoleIdsByUserId(id);
 		//4.封装数据
 		Map<String,Object> map=new HashMap<String, Object>();
+		map.put("departmentId",departmentId );
 		map.put("user", user);
 		map.put("roleIds", roleIds);
 		return map;
@@ -166,7 +170,7 @@ public class SysUserServiceImpl implements SysUserService {
 	
 	@Override
 	public int saveObject(SysUser entity, 
-			String roleIds) {
+			String roleIds,Integer departmentId) {
 		//1.对数据进行合法验证
 		if(entity==null)
 		throw new ServiceException("保存对象不能为空");
@@ -187,6 +191,8 @@ public class SysUserServiceImpl implements SysUserService {
 		
 		entity.setSalt(salt);
 		entity.setPassword(newPwd);
+		entity.setCreatedUser(ShiroUtils.getPrincipal().getUsername());
+
 		//2.2存储用户信息
 		int rows;
 		try{

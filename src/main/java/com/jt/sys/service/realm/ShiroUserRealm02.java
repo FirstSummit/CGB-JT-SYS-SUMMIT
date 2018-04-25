@@ -1,23 +1,15 @@
 package com.jt.sys.service.realm;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthenticatingRealm;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-
 import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.token.DefindToken;
@@ -81,7 +73,7 @@ public class ShiroUserRealm02 extends AuthenticatingRealm {
 		//3.2对用户信息进行封装返回.
 		AuthenticationInfo info=
 		new SimpleAuthenticationInfo(
-		    sysUser.getUsername(), //主身份
+		    sysUser, //主身份
 		    sysUser.getPassword(), //已加密的密码
 		    byteSource,//salt对应的字节源对象
 		    getName());//realm 的名字

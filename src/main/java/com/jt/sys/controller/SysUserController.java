@@ -1,6 +1,4 @@
 package com.jt.sys.controller;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -34,9 +32,9 @@ public class SysUserController {
 	}
 	@RequestMapping("doUpdateObject")
 	@ResponseBody
-	public JsonResult doUpdateObject(SysUser entity,String roleIds){
+	public JsonResult doUpdateObject(SysUser entity,String roleIds,Integer departmentId,Integer oldDepartmentId){
 		sysUserService.updateObject(entity,
-				roleIds);
+				roleIds,departmentId,oldDepartmentId);
 		return new JsonResult();
 	}
 	
@@ -53,9 +51,9 @@ public class SysUserController {
 	@RequestMapping("doSaveObject")
 	@ResponseBody
 	public JsonResult doSaveObject(
-			SysUser entity,String roleIds){
+			SysUser entity,String roleIds,Integer departmentId){
 		sysUserService.saveObject(entity,
-				roleIds);
+				roleIds,departmentId);
 		JsonResult r=new JsonResult();
 		r.setMessage("save ok");
 		return r;

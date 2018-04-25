@@ -1,0 +1,353 @@
+<!-- Horizontal Form -->
+<div class="box box-info">
+	<div class="box-header with-border">
+		<h3 class="box-title">添加菜单</h3>
+	</div>
+	<!-- /.box-header -->
+	<!-- form start -->
+	<form class="form-horizontal">
+		<div class="box-body">
+			<div class="form-group"></div>
+			<div class="form-group">
+				<label for="nameId" class="col-sm-2 control-label">部门名称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="nameId"
+						placeholder="名称">
+				</div>
+				<div style="display: none; color: red; text-align: center"
+					id="departmentname">该部门已存在</div>
+					
+			</div>
+			<div class="form-group">
+				<label for="parentId" class="col-sm-2 control-label">上级部门</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control load-sys-menu"
+						readonly="readonly" id="parentId" placeholder="上级部门">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="managerId" class="col-sm-2 control-label">部门经理</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="managerId"
+						placeholder="manager">
+				</div>
+				<div style="display: none; color: red; text-align: center"
+					id="managername">不存在该经理</div>
+					
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="sortId" class="col-sm-2 control-label">排序号 </label>
+			<div class="col-sm-10">
+				<input type="text" id="sortId" placeholder="排序号"
+					class="form-control">
+			</div>
+			<div style="display: none; color: red; text-align: center"
+				id="departmentnamesort">该排序号已存在</div>
+				
+		</div>
+		<div class="form-group">
+			<label for="noteId" class="col-sm-2 control-label">部门描述 </label>
+			<div class="col-sm-10">
+				<input type="text" id="noteId" placeholder="部门描述"
+					class="form-control">
+			</div>
+</div>
+<!-- /.box-body -->
+<div class="box-footer">
+	<button type="button" class="btn btn-default btn-cancel">Cancel</button>
+	<button type="button" class="btn btn-info pull-right btn-save">Save</button>
+</div>
+<!-- /.box-footer -->
+</form>
+<div class="layui-layer layui-layer-page layui-layer-molv layer-anim"
+	id="menuLayer" type="page" times="2" showtime="0" contype="object"
+	style="z-index: 59891016; width: 300px; height: 450px; top: 100px; left: 500px; display: none">
+	<div class="layui-layer-title" style="cursor: move;">选择部门</div>
+	<div class="layui-layer-content" style="height: 358px;">
+		<div style="padding: 10px;" class="layui-layer-wrap">
+			<ul id="menuTree" class="ztree"></ul>
+			<!-- 动态加载树 -->
+		</div>
+	</div>
+	<span class="layui-layer-setwin"> <a
+		class="layui-layer-ico layui-layer-close layui-layer-close1 btn-cancel"></a></span>
+	<div class="layui-layer-btn layui-layer-btn-">
+		<a class="layui-layer-btn0 btn-confirm">确定</a> <a
+			class="layui-layer-btn1 btn-cancel">取消</a>
+	</div>
+</div>
+
+</div>
+<script type="text/javascript"
+	src="bower_components/ztree/jquery.ztree.all.min.js"></script>
+<script type="text/javascript" src="bower_components/layer/layer.js">
+	
+</script>
+<script type="text/javascript">
+	var zTree;
+	//初始化zTree时会用到
+	var setting = {
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : "id", //节点数据中保存唯一标识的属性名称
+				pIdKey : "parentId", //节点数据中保存其父节点唯一标识的属性名称
+				rootPId : null
+			//根节点id
+			}
+		//json 格式javascript对象
+		}
+	}//json 格式的javascript对象
+
+	$(function() {
+		$(".form-horizontal").on("click", ".load-sys-menu", doLoadZTreeNodes);
+
+		$(".layui-layer").on("click", ".btn-cancel", doHideTree).on("click",
+				".btn-confirm", doConfirm);
+
+		$(".box-footer").on("click", ".btn-cancel", doCancel)
+						.on("click",".btn-save", doSaveOrUpdate);
+
+		$("#nameId").bind("input", function() {
+			isExist("department/doDepartmentIsExists.do", $(this))
+		});
+		$("#nameId").bind("blur",blured)
+		$("#sortId").bind("input", function() {
+			isExist("department/doDepartmentIsExists.do", $(this))
+		});
+		$("#sortId").bind("blur",blured);
+		$("#managerId").bind("input", function() {
+			isManagerExist();
+		});
+		//假如是修改
+		  var id=$(".container-fluid").data("id");
+		  console.log("id="+id);
+		  if(id)doFindObjectById(id);
+
+		/* $(".form-horizontal").on("input","#nameId",isExist("department/doIsExists.do",$(this))); */
+	})
+	function doFindObjectById(id){
+	 var url="department/doFindDepartmentById.do";
+	  var params={"id":id};
+	  $.getJSON(url,params,function(result){
+		  if(result.state==1){
+			  doInitFormData(result.data);
+		  }else{
+			  alert(result.message);
+		  }
+	  });
+	}
+	
+	function doInitFormData(data){
+		  $("#nameId").val(data.name);
+		  $("#sortId").val(data.sort);
+		  $("#parentId").val(data.parentName);
+		  $("#managerId").val(data.managerName);
+		  $("#noteId").val(data.note);
+		  $(".form-horizontal")
+		  .data("parentId",data.parentId);
+		  $(".form-horizontal").data("managerId",data.managerId);
+		  $(".form-horizontal").data("departmentId",data.name);
+		  $(".form-horizontal").data("sortId",data.sort);
+	}
+	function blured(){
+		if(!$("#nameId").val()){
+			$("#departmentname").css("display", "none");
+			$("#nameId").removeData();
+		}
+		if(!$("#sortId").val()){
+			$("#departmentnamesort").css("display", "none");
+			$("#sortId").removeData();
+		}
+	}
+	function doCancel() {
+		$(".container-fluid").load("department/listUI.do", function() {
+			$(".container-fluid").removeData();
+			//.removeData("id")
+			//.removeData("parentId")
+			$(".form-horizontal").removeData();
+		})
+	}
+
+	function doSaveOrUpdate() {
+		//1.获取表单数据
+		var params = getEditFormData();
+		/* console.log(params); */
+		//2.定义url
+		var insertUrl = "department/doSaveDepartment.do";
+		var updateUrl = "department/doUpdateDepartment.do";
+		  var id=$(".container-fluid").data("id");
+		  var url=id?updateUrl:insertUrl;
+		  if(id)params.id=id;
+		//3.异步提交数据
+		if(id){
+			if( ($(".form-horizontal").data("departmentId")==$("#nameId").val()&&!$("#sortId").data("exists"))
+					||($(".form-horizontal").data("sortId")==$("#sortId").val()&&!$("#nameId").data("exists"))
+					||($(".form-horizontal").data("departmentId")==$("#nameId").val()&&$(".form-horizontal").data("sortId")==$("#sortId").val())){
+				$.post(url, params, function(result) {
+					if (result.state == 1) {
+						alert(result.data);
+						doCancel();
+					} else {
+						alert(result.message);
+					}
+				});
+			}else{
+				alert("请仔细查看提示内容并检查填写内容");
+				return;
+			}
+		}else{
+			
+		if(!$("#nameId").data("exists")&&$(".form-horizontal").data("parentId")&&$(".form-horizontal").data("managerId")&& !$("#nameId").data("exists") && !$("#sortId").data("exists")){
+			$.post(url, params, function(result) {
+				if (result.state == 1) {
+					alert(result.data);
+					doCancel();
+				} else {
+					alert(result.message);
+				}
+			});
+		}else{
+			alert("请仔细查看提示内容并检查填写内容");
+			return;
+		}
+		}
+	}
+	
+	function getEditFormData() {
+		var params;
+		params = {
+			name:$("#nameId").val(),
+			parentId:$(".form-horizontal").data("parentId"),
+			managerId:$(".form-horizontal").data("managerId"),
+			sort:$("#sortId").val(),
+			note:$("#noteId").val()
+		}
+		return params;
+	}
+
+	function isManagerExist() {
+		var username = $("#managerId").val();
+		if (!username) {
+			return;
+		}
+		var url = "department/doManagerIsExists.do";
+		var params = {
+			"username" : username
+		};
+		/* console.log(params) */
+		$.post(url, params, function(result) {
+			if (!result.data) {
+				$("#managername").css("display", "block");
+				
+			} else {
+				$("#managername").css("display", "none");
+				$(".form-horizontal").data("managerId", result.data.id)
+				$("#managerId").data("exists", "存在");
+				
+			}
+		});
+	}
+	function isExist(url, $obj) {
+		var name = $obj.val();
+		if (!name) {
+			$obj.css("display","block");
+			$obj.removeData();
+			return;
+		}
+		var params = {
+			"name" : $("#nameId").val(),
+			sort : $("#sortId").val()
+		}
+
+		
+	/* console.log(params); */
+		$.post(url, params, function(result) {
+			var list=result.data[0];
+			if (!list) {
+					$("#departmentname").css("display", "none");
+					$("#nameId").removeData();
+					$("#departmentnamesort").css("display", "none");
+					$("#sortId").removeData();
+			} else if(result.data.length==2){
+				$("#departmentname").css("display", "block");
+				$("#nameId").data("exists", "存在");
+				$("#departmentnamesort").css("display", "block");
+				$("#sortId").data("exists", "存在");
+			}else{
+				var department=result.data[0];
+				/* console.log(department); */
+				if (department.name == $("#nameId").val()) {
+					$("#departmentname").css("display", "block");
+					$("#nameId").data("exists", "存在");
+				} else {
+					$("#departmentname").css("display", "none");
+					$("#nameId").removeData();
+				}
+
+				if (department.sort == $("#sortId").val()) {
+					$("#departmentnamesort").css("display", "block");
+					$("#sortId").data("exists", "存在");
+				} else {
+					$("#departmentnamesort").css("display", "none");
+					$("#sortId").removeData();
+				}
+			}
+
+		});
+	}
+	/* function isExist(){
+	  var url="department/doIsExists.do";
+	  var name=$("#nameId").val();
+	  if(!name){
+		  console.log("用户名不能为空");
+		  return;
+	  }
+	  var params={"name":name};
+	  console.log(params);
+	  $.post(url,params,function(result){
+		  if(result.data){
+			  $("#nameId").data("isExists",true);
+			  console.log("此用户已存在");
+		  }else{
+			  $("#nameId").data("isExists",false);
+			  console.log("此用户不存在");
+		  }
+	  });
+	}   */
+
+	function doHideTree() {
+		$("#menuLayer").css("display", "none");
+	}
+	function doConfirm() {
+		//1.获取选中的记录(id,name);
+		var selectedNodes = zTree.getSelectedNodes();
+		var node = selectedNodes[0];
+		/* console.log(node); */
+		//2.将id和name填写或绑定在具体对象上
+		$("#parentId").val(node.name);
+		$(".form-horizontal").data("parentId", node.id)
+		//3.隐藏zTree对应的Div
+		doHideTree();
+	}
+	function doLoadZTreeNodes() {
+		var url = "department/doFindZTreeNodes.do";
+		$("#menuLayer").css("display", "block");
+		$.getJSON(url, function(result) {
+			if (result.state == 1) {
+				zTree = $.fn.zTree.init($("#menuTree"), setting, result.data);
+			} else {
+				alert(result.message);
+			}
+		});
+	}
+</script>
+
+
+
+
+
+
+
+

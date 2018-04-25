@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.sys.dao.SysDepartmentDao">
+
+	<update id="updateDepartment" parameterType="sysDepartment"> update sys_departments 
+		set name=#{name}, parentId=#{parentId},managerId=#{managerId}, sort=#{sort}, 
+		 modifiedUser=#{modifiedUser}, modifiedTime=now() 
+		where id=#{id} </update> 
+
+		<insert id="insertObject" parameterType="sysMenu"> <!-- useGeneratedKeys="true" keyProperty="id" -->
+		insert into sys_departments 
+		(name,parentId,sort,managerId,count,note,createdTime,modifiedTime,createdUser,modifiedUser) 
+		values (#{name},#{parentId},#{sort},#{managerId},#{count},#{note},now(),now(),#{createdUser},#{modifiedUser}) 
+		</insert> 
+
+
+		<select id="findZTreeNodes" resultType="node"> select id,name,parentId 
+		from sys_departments </select>
+
+	<select id="findDepartmentById" resultType="map"> 
+	select c.*,(select name
+		from sys_departments p
+		where c.parentId=p.id) parentName,(select username from sys_users u where
+		c.managerId=u.id) managerName
+		from sys_departments c
+		where id=#{id}
+		</select>
+
+	<select id="getChildCount" resultType="int"> select count(*) from sys_departments 
+		where parentId=#{id} </select> 
+
+	<delete id="deleteDepartmentById"> delete from sys_departments where id=#{id} </delete> 
+
+
+	<!-- 方法一 -->
+	<!-- <select id="findObjects" resultType="map"> select c.*,p.name parentName 
+		from sys_menus c left join sys_menus p on c.parentId=p.id </select> -->
+	<!-- 方法二 -->
+	<select id="findObjects" resultType="map">
+		select c.*,(select name
+		from sys_departments p
+		where c.parentId=p.id) parentName,(select username from sys_users u where
+		c.managerId=u.id) managerName
+		from sys_departments c
+	</select>
+
+	<!-- <sql id="departmentWhere1">
+		<where>
+			<if test="name!=null and name !=''">
+				name=#{name}
+			</if>
+		</where>
+	</sql>
+	<sql id="departmentWhere2">
+		<where>
+			<if test="sort!=null">
+				sort=#{sort}
+			</if>
+		</where>
+	</sql>
+ -->
+
+	<select id="findDepartmentByName" resultType="sysDepartment">
+		select * from sys_departments where name=#{name} or sort=#{sort}
+		<!-- <include refid="departmentWhere1"></include>
+		<include refid="departmentWhere2"></include> -->
+	</select>
+	
+	<select id="findCountById" resultType="int">
+		select IFNULL(MAX(count),0) AS count from sys_departments where id=#{id}
+	</select>
+	
+	<update id="updateCount">
+	update sys_departments set count=#{count} where id=#{department_id}
+	</update>
+
+</mapper>
+
+
+

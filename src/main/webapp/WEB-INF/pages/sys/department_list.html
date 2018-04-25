@@ -2,7 +2,7 @@
 	<div class="col-xs-12">
 		<div class="box">
 			<div class="box-header">
-				<h3 class="box-title">菜单管理</h3>
+				<h3 class="box-title">部门管理</h3>
 
 				<div class="box-tools">
 					<div class="input-group input-group-sm" style="width: 100px;">
@@ -43,7 +43,7 @@ var columns = [
 	radio : true
 },
 {
-	title : '菜单ID',
+	title : '部门ID',
 	field : 'id',
 	visible : false,
 	align : 'center',
@@ -51,7 +51,7 @@ var columns = [
 	width : '80px'
 },
 {
-	title : '菜单名称',
+	title : '部门名称',
 	field : 'name',
 	align : 'center',
 	valign : 'middle',
@@ -59,29 +59,14 @@ var columns = [
 	width : '130px'
 },
 {
-	title : '上级菜单',
+	title : '上级部门',
 	field : 'parentName',
 	align : 'center',
 	valign : 'middle',
 	sortable : true,
 	width : '100px'
 },
-{
-	title : '类型',
-	field : 'type',
-	align : 'center',
-	valign : 'middle',
-	sortable : true,
-	width : '70px',
-	formatter : function(item, index) {
-		if (item.type == 1) {
-			return '<span class="label label-success">菜单</span>';
-		}
-		if (item.type == 2) {
-			return '<span class="label label-warning">按钮</span>';
-		}
-	}
-}, 
+
 {
 	title : '排序号',
 	field : 'sort',
@@ -91,53 +76,36 @@ var columns = [
 	width : '70px'
 }, 
 {
-	title : '菜单URL',
-	field : 'url',
+	title : '部门经理',
+	field : 'managerName',
 	align : 'center',
 	valign : 'middle',
 	sortable : true,
 	width : '160px'
 }, 
 {
-	title : '授权标识',
-	field : 'permission',
+	title : '部门人数',
+	field : 'count',
 	align : 'center',
 	valign : 'middle',
-	sortable : true
-	
-} ];
-
+	sortable : true,
+	width : '90px'
+},
+{
+	title : '部门描述',
+	field : 'note',
+	align : 'center',
+	valign : 'middle',
+	sortable : true,
+	width : '160px'
+}];
 $(function(){
 	doGetObjects();
-	$(".input-group-btn")
-	.on("click",".btn-delete",doDeleteObject)
-	.on("click",".btn-add,.btn-update",doAddOrUpdate);
+	$(".input-group-btn").on("click",".btn-add,.btn-update",doAddOrUpdate).on("click",".btn-delete",doDeleteObject);
 })
-function doAddOrUpdate(){
-	var title;
-	if($(this).hasClass("btn-add")){
-		title="添加菜单";
-		doLoadEditPage(title);
-	}else if($(this).hasClass("btn-update")){
-		title="修改菜单";
-		var id=doGetCheckedId();
-		if(!id){
-			alert("请先选择");
-			return;
-		}
-		$(".container-fluid").data("id",id);
-		doLoadEditPage(title);
-	}
-}
-function doLoadEditPage(title){
-	var url="menu/editUI.do";
-	 $(".container-fluid").load(url,function(){
-		 $(".box-title").html(title);
-	 })
-}
 function doDeleteObject(){
 	//1.url
-	var url="menu/doDeleteObject.do";
+	var url="department/doDeleteDepartmentById.do";
 	//2.params
 	var id=doGetCheckedId();
 	if(!id){
@@ -148,7 +116,7 @@ function doDeleteObject(){
 	//3.post
 	$.post(url,params,function(result){
 		if(result.state==1){
-			alert(result.message);
+			alert(result.data);
 			doGetObjects();
 		}else{
 			alert(result.message);
@@ -168,12 +136,34 @@ function doGetCheckedId(){
 	}
 }
 
-
+function doAddOrUpdate(){
+	var title;
+	if($(this).hasClass("btn-add")){
+		title="添加部门";
+		doLoadEditPage(title);
+	}else{
+		title="修改部门";
+		var id=doGetCheckedId();
+		if(!id){
+			alert("请先选择");
+			return;
+		}
+		$(".container-fluid").data("id",id);
+		doLoadEditPage(title);
+	}
+}
+function doLoadEditPage(title){
+	var url="department/editUI.do";
+	$(".container-fluid").load(url,function(){
+		 $(".box-title").html(title);
+	 })
+}
 
 function doGetObjects(){
 	//1.构建treeTable对象
 	var tableId="menuTable";
-	var url="menu/doFindObjects.do";
+	var url="department/doFindObjects.do";
+	/* console.log(url); */
 	var treeTable=
     new TreeTable(tableId, url, columns)
 	//2.初始化treeTable
@@ -196,4 +186,5 @@ function doGetObjects(){
 	f.get(); 
 	
 }
+
 </script>

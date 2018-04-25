@@ -27,9 +27,9 @@ public interface SysUserService {
 	    */
 	   Map<String,Object> findObjectById(Integer id);
 	   
-	   void updateObject(SysUser entity,String roleIds);
+	   void updateObject(SysUser entity,String roleIds,Integer departmentId,Integer oldDepartmentId);
 	
-	   int saveObject(SysUser entity,String roleIds);
+	   int saveObject(SysUser entity,String roleIds,Integer departmentId);
 	
 	   List<CheckBox> findRoles();
 	

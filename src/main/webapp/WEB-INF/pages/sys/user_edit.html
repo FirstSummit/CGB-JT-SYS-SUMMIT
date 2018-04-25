@@ -39,6 +39,12 @@
             </div>
           </div>
         </div>
+        <div class="form-group">
+				<label for="departmentId" class="col-sm-2 control-label">部门</label>
+				<div class="col-sm-10">
+						<ul id="departmentTree" class="ztree"></ul>
+				</div>
+		  </div>
         <!-- /.box-body -->
         <div class="box-footer">
           <button type="button" class="btn btn-default btn-cancel">Cancel</button>
@@ -47,14 +53,47 @@
         <!-- /.box-footer -->
       </form>
     </div>
+<script type="text/javascript" src="bower_components/ztree/jquery.ztree.all.min.js"></script>
 <script type="text/javascript">
+var ztree; 
+var setting = {
+	data : {
+	    simpleData : {
+			enable : true,
+			idKey : "id",  //节点数据中保存唯一标识的属性名称
+			pIdKey : "parentId",  //节点数据中保存其父节点唯一标识的属性名称
+			rootPId : null  //根节点id
+		}
+	},
+	check:{
+		enable:true,
+		nocheckInherit:true,
+		chkStyle: "radio"
+	}
+}
  $(document).ready(function(){
+	 doLoadSysDepartments();
 	 doLoadRoles();
 	 $(".box-footer")
 	 .on("click",".btn-cancel",doCancel)
 	 .on("click",".btn-save",doSaveOrUpdate);
  });
- 
+//页面加载完成初始化zTree
+function doLoadSysDepartments(){
+	var url="department/doFindZTreeNodes.do"
+	$.getJSON(url,function(result){
+		if(result.state==1){
+		ztree=$.fn.zTree.init(
+		$("#departmentTree"),setting,result.data);
+		var data=$(".container-fluid").data("data");
+    	if(data){
+    		doInitEditForm(data);
+    	}
+		}else{
+		alert(result.message);
+		}
+	})
+}
  function doCancel(){
 	$(".container-fluid")
 	.load("user/listUI.do");
@@ -64,7 +103,10 @@
 	 var id=$(".container-fluid").data("id");
 	 //1.获取表单数据
 	 var params=getEditFormData();
-	 if(id)params.id=id;
+	 if(id){
+		 params.id=id
+		 params.oldDepartmentId = $(".container-fluid").data("departmentId");
+	 };
 	 //2.发起异步请求
 	 var insertUrl="user/doSaveObject.do";
 	 var updateUrl="user/doUpdateObject.do";
@@ -87,6 +129,18 @@
 	    email:$("#emailId").val(),
 	    mobile:$("#phoneId").val()
 	 }
+	//获取选中的node节点
+ 	var departmentIds=[];
+ 	var checkedNodes=
+ 	ztree.getCheckedNodes(true);
+ 	for(var i in checkedNodes){
+ 		departmentIds.push(checkedNodes[i].id)
+ 	}
+ 	if(departmentIds.length!=1){
+ 		alert("用户所在部门不能为空且只能有一个");
+ 		return;
+ 	}
+ 	params.departmentId=departmentIds[0];
 	 //获取选择的角色
 	 var roleIds=new Array();
 	 $("#rolesId input[name='roleId']")
@@ -142,6 +196,17 @@
 	 for(var i in ids){
 	  $("#rolesId input[value='"+ids[i]+"']") .prop("checked",true);
 	 }
+		//展开所有节点
+		//勾选角色所拥有的菜单
+		var departmentId = data.departmentId;
+		$(".container-fluid").data("departmentId",departmentId);
+	if(departmentId){
+		ztree.expandAll(true);
+	
+			var node = ztree.getNodeByParam("id",departmentId);
+			//选中当前节点
+			ztree.checkNode(node,true,false); 
+	}	
  }
 function doInitPageRoles(data){
 	 //1.获取角色要显示的位置对象

@@ -140,7 +140,8 @@
 	    <property name="securityManager" ref="securityManager"/>
     </bean>
 	
-	
+	<!-- 启用AOP注解(自动为目标对象创建代理对象) -->
+       <aop:aspectj-autoproxy />
 	
 	
 	
