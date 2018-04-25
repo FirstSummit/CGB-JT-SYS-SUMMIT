@@ -7,7 +7,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -18,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.entity.SysUser;
+import com.jt.sys.token.DefindToken;
 /***
  * 借助此realm类型的对象实现用户认证及权限
  * 相关数据的获取
@@ -35,8 +35,7 @@ public class ShiroUserRealm  extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(
 	    PrincipalCollection principals) {
 		//1.获取用户信息
-		SysUser sysUser=(SysUser)
-		principals.getPrimaryPrincipal();
+		SysUser sysUser=(SysUser)principals.getPrimaryPrincipal();
 		System.out.println("AuthorizationInfo.user="+sysUser);
 		//2.获取用户权限信息
 		List<String> list=
@@ -48,6 +47,9 @@ public class ShiroUserRealm  extends AuthorizingRealm {
 				permissionSet.add(permission);
 			}
 		}
+		
+		
+	
 		System.out.println("permissionSet="+permissionSet);
 		//4.对用户权限信息进行封装
 		SimpleAuthorizationInfo info=
@@ -64,8 +66,11 @@ public class ShiroUserRealm  extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(
 			AuthenticationToken token) throws AuthenticationException {
 		//1.从token中获取Subject身份信息
-		UsernamePasswordToken upToken=
-		(UsernamePasswordToken)token;
+		DefindToken upToken=
+		(DefindToken)token;
+		if(!("userAndpwd".equals(upToken.getMethod()))){
+			return null;
+		}
 		String username=upToken.getUsername();
 		//2.根据用户信息进行数据库查询
 		SysUser user=

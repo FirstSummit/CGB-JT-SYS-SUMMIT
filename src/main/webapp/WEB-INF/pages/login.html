@@ -35,20 +35,33 @@
   <div class="login-box-body">
     <p class="login-box-msg">Sign in to start your session</p>
 
+      <h5>请选择登录方式</h5>
+      	<div>
+      	<button class="btn-Method userAndpwd" name="loginMethod" >用户名密码登录</button>
+      	<button class="btn-Method phone" name="loginMethod" >&nbsp;&nbsp;&nbsp;&nbsp;手机密码&nbsp;&nbsp;&nbsp;&nbsp;</button>
+      	</div>
+      	<br/>
     <form method="post">
-      <div class="form-group has-feedback">
+      <div class="form-group has-feedback user-method" style="display:block">
         <input type="text" id="usernameId" name="username" class="form-control" placeholder="username">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
-      <div class="form-group has-feedback">
+     <div class="phoneMethod" style="display:none">
+     <input type="text" id="phoneId" class="form-control" name="phone" placeholder="phoneNumber"
+     >
+     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      <br/>
+     </div>
+      <div class="form-group has-feedback" style="display:block">
         <input type="password" id="passwordId" name="password" class="form-control" placeholder="Password">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+       
       </div>
-     
-
+     <br/>
+	
       <div class="row">
         <div class="col-xs-8">
-          <div class="checkbox icheck">
+          <div class="checkbox icheck" style="display:block">
             <label>
               <input type="checkbox"> Remember Me
             </label>
@@ -84,16 +97,53 @@
    /*$(".btn").click(function(){
     	doLogin();
     });*/
-    $(".btn").click(doLogin);
+    $(".login-page").data("method","userAndpwd")
+   $(".btn").click(doLogin);
+   $(".userAndpwd").click(doHidePhone);
+   $(".phone").click(doHideUsername);
   });
-  function doLogin(){
+ 
+  			
+  function doHideUsername(){
+	  $("#passwordId").html("");
+	  $(".login-box-msg").html("Sign in to start your session");
+	  $(".login-page").data("method","phone")
+	  $(".user-method").css("display","none");
+	  $(".phoneMethod").css("display","block");
 	 
-	  var params={
+  }
+  
+  function doHidePhone(){
+	  $("#passwordId").html("");
+	  $(".login-box-msg").html("Sign in to start your session");
+	  $(".login-page").data("method","userAndpwd");
+	  $(".user-method").css("display","block");
+	  $(".phoneMethod").css("display","none");
+  }
+  
+  
+  function doLogin(){
+	 var url;
+	 var params;
+	  //用户名密码
+	  if($(".login-page").data("method")=="userAndpwd"){
+	  url="doLogin.do";
+	  params={
+		   method:"userAndpwd",
 		 username:$("#usernameId").val(),
 		 password:$("#passwordId").val()
 	  }
-	  var url="doLogin.do";
+  	}else{
+  		//手机号密码
+  		url="doLogin02.do";
+  		params={
+  				method:"phone",
+  				mobile:$("#phoneId").val(),
+  				password:$("#passwordId").val()
+  		}
+  	}
 	  $.post(url,params,function(result){
+		  
 		  if(result.state==1){
 			//跳转到indexUI对应的页面
 			location.href="indexUI.do?t="+Math.random();

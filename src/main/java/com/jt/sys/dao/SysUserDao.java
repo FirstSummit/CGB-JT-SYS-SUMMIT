@@ -45,4 +45,5 @@ public interface SysUserDao {
 	
 	// 查询所有的用户信息
 	List<SysUser> findObjects();
+	SysUser findUserByPhone(String mobile);
 }

@@ -23,6 +23,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -40,6 +41,7 @@ import com.jt.sys.dao.SysUserRoleDao;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.service.SysUserService;
 import com.jt.sys.service.UserPdfView;
+import com.jt.sys.token.DefindToken;
 @Service
 public class SysUserServiceImpl implements SysUserService {
 	
@@ -51,20 +53,52 @@ public class SysUserServiceImpl implements SysUserService {
 	private SysUserRoleDao sysUserRoleDao;
 	
 	@Override
-	public void login(String username,String password) {
+	public void login(String method,String username,String password) {
 		System.out.println(sysRoleDao.getClass().getName());
+		System.out.println("service.login");
 		//0.参数合法性验证
+		
 		if(StringUtils.isEmpty(username))
-		throw new ServiceException("用户名不能为空");
+			throw new ServiceException("用户名不能为空");
 		if(StringUtils.isEmpty(password))
-		throw new ServiceException("密码不能为空");
+			throw new ServiceException("密码不能为空");
 		//1.获取Subject(主体)对象
 		Subject subject=SecurityUtils.getSubject();
-		//2.封装用户名和密码(封装到一个令牌对象)
-		UsernamePasswordToken token=
-		new UsernamePasswordToken(
-		username, password);
-	    //3.执行身份认证
+		//2.封装用户名和密码
+		DefindToken token=
+				new DefindToken(
+						username, password);
+		//3.执行身份认证
+		token.setMethod(method);
+		try {
+			subject.login(token);
+			//此请求会提交给SecurityManager
+			//SecurityManager会调用认证处理器Authenticator
+			//认证处理器会去访问相关Realm对象获取认证信息
+		} catch (AuthenticationException e) {
+			e.printStackTrace();
+			throw new ServiceException("用户名或密码不正确");
+		}
+		//4.记录用户信息
+		Session session=
+				SecurityUtils.getSubject().getSession();
+		session.setAttribute("user", username);
+	}
+	
+	@Override
+	public void login02(String method,String mobile, String password) {
+		if(StringUtils.isEmpty(mobile))
+			throw new ServiceException("电话号码不能为空");
+		if(StringUtils.isEmpty(password))
+			throw new ServiceException("密码不能为空");
+		Subject subject=SecurityUtils.getSubject();
+		//2.封装用户名和密码
+			System.out.println(mobile+"   /"+password);
+		DefindToken token=
+				new DefindToken(
+						mobile,password);
+		token.setMethod(method);
+		//3.执行身份认证
 		try {
 		subject.login(token);
 		//此请求会提交给SecurityManager
@@ -72,8 +106,9 @@ public class SysUserServiceImpl implements SysUserService {
 		//认证处理器会去访问相关Realm对象获取认证信息
 		} catch (AuthenticationException e) {
 		e.printStackTrace();
-		throw new ServiceException("用户名或密码不正确");
+		throw new ServiceException("电话号码和验证码不匹配");
 		}
+		
 	}
 	
 	

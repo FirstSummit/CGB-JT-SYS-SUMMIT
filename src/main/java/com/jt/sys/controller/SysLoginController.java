@@ -19,10 +19,16 @@ public class SysLoginController {
      @RequestMapping("doLogin")
      @ResponseBody
      public JsonResult doLogin(
-    	String username,String password){
-        sysUserService.login(username, password);
+    	String method,String username,String password){
+        sysUserService.login(method,username, password);
       return new JsonResult("login ok");
      }
+     @RequestMapping("doLogin02")
+	  @ResponseBody
+	  public JsonResult doLogin02(String method,String mobile,String password){
+		  sysUserService.login02(method, mobile, password);
+		  return new JsonResult("login ok");
+	  }
      
 }
 
