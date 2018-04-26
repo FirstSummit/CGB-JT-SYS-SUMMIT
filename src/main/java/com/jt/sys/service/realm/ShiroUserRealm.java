@@ -77,13 +77,9 @@ public class ShiroUserRealm  extends AuthorizingRealm {
 		}
 		String username=upToken.getUsername();
 		//2.根据用户信息进行数据库查询
-		//SysUser user=
-		//sysUserDao.findUserByUserName(username);
-		SysUsersExample example=new SysUsersExample();
-		Criteria criteria=example.createCriteria();
-		criteria.andUsernameEqualTo(username);
-		List<SysUsers> selectByExample =sysUserDao.selectByExample(example);
-		SysUsers user=selectByExample.get(0);
+		SysUser user=
+		sysUserDao.findUserByUserName(username);
+		
 		//3.对查询结果进行验证(例如这个用户是否已经被禁用了)
 		if(user==null)
 		throw new AuthenticationException("此用户不存在");

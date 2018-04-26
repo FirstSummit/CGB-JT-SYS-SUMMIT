@@ -13,10 +13,39 @@
 							<button type="button" class="btn btn-default btn-search">
                                 <i class="fa fa-search"></i>
 							</button>
-							<button type="button" class="btn btn-default btn-add">添加</button>
-							<button type="button" class="btn btn-default btn-update">修改</button>
+							<button type="button" class="btn btn-default btn-add"
+								data-toggle="modal"  data-target="#editUser" >添加</button>
+							<button type="button" class="btn btn-default btn-update"
+							data-toggle="modal"  data-target="#editUser">修改</button>
 							<button type="button" class="btn btn-default btn-download" data-toggle="modal" data-target="#myModal">下载</button>
 						</div>
+						
+						<div class="modal fade" id="editUser" tabindex="-1" role="form"
+							aria-labelledby="modalTitle" aria-hidden="true" >
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header modal-edit-header" style="text-align: center">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-hidden="true">
+											&times;
+										</button>
+										<h4 class="modal-title" id="modalTitle"
+										style="font-weight:bolder;font-size:35px">用户信息</h4>
+									</div>
+									<div class="modal-body modal-edit-body">
+									</div> 
+									<div class="modal-footer modal-edit-footer">
+										<button type="button" class="btn btn-default btn-cancel"
+											>取消</button>
+										<button type="button" class="btn btn-primary btn-save"
+										>提交</button>
+									</div>
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal -->
+						</div>
+						
 					</div>
 				</div>
 			</div>
@@ -27,9 +56,9 @@
 						<tr>
 							<th>ID</th>
 							<th>用户名</th>
+							<th>所属部门</th>
 							<th>邮箱</th>
 							<th>手机号</th>
-							<th>所属部门</th>
 							<th>状态</th>
 							<th>创建时间</th>
 							<th>修改时间</th>
@@ -62,7 +91,7 @@
 			<div class="modal-body">
 				请输入文件名<input id="fileName" type="text"/>
 			</div>
-			<div class="modal-footer">
+			<div class="modal-footer modal-download-footer">
 				<button type="button" class="btn btn-primary btn-primary-download" value="pdf">
 					下载pdf
 				</button>
@@ -85,11 +114,74 @@
 	   .on("click",".btn-search",doQueryObjects)
 	   .on("click",".btn-add,.btn-update",doAddOrUpdate)
 	
-	   $(".modal-footer")
+	   $(".modal-download-footer")
 	  	.on("click",".btn-primary-download",doDownloadObject);
 	  	
 	   $("tbody").on("click",".btn-valid",doValidById);
+	   
+	   $(".modal-edit-footer")
+		 .on("click",".btn-cancel",doCancel)
+		 .on("click",".btn-save",doSaveOrUpdate);
+	
+		$(".modal-edit-header")
+		 .on("click",".close",doCancel);
+	   
+	   
    });
+   
+   function doCancel(){
+		$(".modal-edit-body").removeData("id");
+		$("#editUser").modal("hide");
+		doGetObjects();
+	 }
+   
+   function doSaveOrUpdate(){
+		 var id=$(".modal-edit-body").data("id");
+		 //1.获取表单数据
+		 var params=getEditFormData();
+		 if(id){
+			 params.id=id,
+			 params.departmentId = $(".form-horizontal").data("departId");
+			 params.oldDepartmentId = $(".form-horizontal").data("oldDepartmentId");
+		 };
+		 //2.发起异步请求
+		 var insertUrl="user/doSaveObject.do";
+		 var updateUrl="user/doUpdateObject.do";
+		 var url=id?updateUrl:insertUrl;
+		 console.log(params);
+		 $.post(url,params,function(result){
+			 if(result.state==1){
+				 alert(result.message);
+				 doCancel();
+			 }else{
+				alert(result.message);
+			 }
+		 })
+	 }
+	 function getEditFormData(){
+		 //获取用户输入的数据
+		 var params={
+		    username:$("#usernameId").val(),
+		    password:$("#passwordId").val(),
+		    email:$("#emailId").val(),
+		    mobile:$("#phoneId").val(),
+		    departmentId:$(".form-horizontal").data("departId")
+		 }
+
+		 //获取选择的角色
+		 var roleIds=new Array();
+		 $("#rolesId input[name='roleId']")
+		 .each(function(){
+			 if($(this).prop("checked")){
+				roleIds.push($(this).val());
+			 }
+		 });
+		 params.roleIds=roleIds.toString();
+		 return params;
+	 }
+   
+   
+   
    function findDepartment(id){
 	   var departmentName;
 	   $.ajax({
@@ -103,6 +195,7 @@
 	   });
 	   return departmentName;
    }
+   
    function doDownloadObject(){
 		$("#myModal").modal("hide");
 		var type = $(this).val();
@@ -146,7 +239,7 @@
 		   title="修改用户";
 		   var id=getCheckedId();
 		   console.log("id="+id)
-		   $(".container-fluid").data("id",id);
+		   $(".modal-edit-body").data("id",id);
 		  
 		   doLoadEditPage(title);
 	   }
@@ -165,8 +258,8 @@
    
    function doLoadEditPage(title){
 	   var url="user/editUI.do"
-	   $(".container-fluid").load(url,function(){
-		   $(".box-title").html(title);
+	   $(".modal-edit-body").load(url,function(){
+		   $(".modal-title").html(title);
 	   }) 
    }
    
@@ -239,9 +332,9 @@
 		  tr.data("valid",data[i].valid);
 		  var tds="<td><input type='radio' name='radioId' value='"+data[i].id+"' ></td>"+
 		     "<td>"+data[i].username+"</td>"+
+		     "<td>"+departmentName+"</td>"+
 		     "<td>"+data[i].email+"</td>"+
 		     "<td>"+data[i].mobile+"</td>"+
-		     "<td>"+departmentName+"</td>"+
 		     "<td>"+(data[i].valid?"启用":"禁用")+"</td>"+
 		     "<td>"+data[i].createdTime+"</td>"+
 		     "<td>"+data[i].modifiedTime+"</td>"+
