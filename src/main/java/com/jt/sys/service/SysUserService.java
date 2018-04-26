@@ -17,9 +17,9 @@ public interface SysUserService {
 	    * @param username
 	    * @param password
 	    */
-   void login(String method,String username,String password);
+   void login(String username,String password);
 	   
-   void login02(String method,String mobile,String password);
+ 
 	   /**
 	    * 根据用户id查找用户信息以及对应的角色
 	    * @param id

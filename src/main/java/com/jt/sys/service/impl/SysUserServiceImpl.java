@@ -25,6 +25,7 @@ import com.jt.common.exception.ServiceException;
 import com.jt.common.util.ExcelUtil;
 import com.jt.common.util.ShiroUtils;
 import com.jt.common.vo.CheckBox;
+
 import com.jt.sys.dao.SysDepartmentDao;
 import com.jt.sys.dao.SysRoleDao;
 import com.jt.sys.dao.SysUserDao;
@@ -47,62 +48,72 @@ public class SysUserServiceImpl implements SysUserService {
 	@Autowired
 	private SysDepartmentDao sysDepartmentDao;
 	@Override
-	public void login(String method,String username,String password) {
-		System.out.println(sysRoleDao.getClass().getName());
-		System.out.println("service.login");
-		//0.参数合法性验证
-		
-		if(StringUtils.isEmpty(username))
-			throw new ServiceException("用户名不能为空");
-		if(StringUtils.isEmpty(password))
-			throw new ServiceException("密码不能为空");
-		//1.获取Subject(主体)对象
-		Subject subject=SecurityUtils.getSubject();
-		//2.封装用户名和密码
-		DefindToken token=
-				new DefindToken(
-						username, password);
-		//3.执行身份认证
-		token.setMethod(method);
+	public void login(String username, String password) {
+
+		// 0.参数合法性验证以及判断登录类型
+		String loginType = checkLoginType(username, password);
+
+		// 1.获取Subject(主体)对象
+		Subject subject = SecurityUtils.getSubject();
+		// 2.封装用户名和密码
+		DefindToken token = new DefindToken(username, password, loginType);
+		// 3.执行身份认证
 		try {
 			subject.login(token);
-			//此请求会提交给SecurityManager
-			//SecurityManager会调用认证处理器Authenticator
-			//认证处理器会去访问相关Realm对象获取认证信息
+			// 此请求会提交给SecurityManager
+			// SecurityManager会调用认证处理器Authenticator
+			// 认证处理器会去访问相关Realm对象获取认证信息
+			
+			
+			
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
-			throw new ServiceException("用户名或密码不正确");
+				throw new ServiceException("用户名或密码不正确");
 		}
-		//4.记录用户信息
-		Session session=
-				SecurityUtils.getSubject().getSession();
-		session.setAttribute("user", username);
-	}
+		// 4.记录用户信息
+		Session session = SecurityUtils.getSubject().getSession();
+		SysUser sysUser = (SysUser) session.getAttribute("sysUser");
+		if(sysUser.getValid()!=1){
+			throw new ServiceException("该用户已被禁用");
+		}
+			
+			
+		}
 	
-	@Override
-	public void login02(String method,String mobile, String password) {
-		if(StringUtils.isEmpty(mobile))
-			throw new ServiceException("电话号码不能为空");
-		if(StringUtils.isEmpty(password))
+	public String checkLoginType(String username, String password) {
+		// 验证参数合法性
+		if (StringUtils.isEmpty(username))
+			throw new ServiceException("用户名不能为空");
+		if (StringUtils.isEmpty(password))
 			throw new ServiceException("密码不能为空");
-		Subject subject=SecurityUtils.getSubject();
-		//2.封装用户名和密码
-			System.out.println(mobile+"   /"+password);
-		DefindToken token=
-				new DefindToken(
-						mobile,password);
-		token.setMethod(method);
-		//3.执行身份认证
-		try {
-		subject.login(token);
-		//此请求会提交给SecurityManager
-		//SecurityManager会调用认证处理器Authenticator
-		//认证处理器会去访问相关Realm对象获取认证信息
-		} catch (AuthenticationException e) {
-		e.printStackTrace();
-		throw new ServiceException("电话号码或密码不正确");
+		// 验证登录类型
+		String loginType = null;
+		// 如果有@符号,表示是邮箱登录
+		if (username.contains("@")) {
+			String emailReg = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+			if (username.matches(emailReg)) {
+				loginType = "Email";
+				return loginType;
+			} else {
+				throw new ServiceException("邮箱格式不合法");
+			}
 		}
-		
+		String allNumberRegx = "^[0-9]+$";
+		if (username.matches(allNumberRegx)) {
+			String mobileRegx = "^((17[0-9])|(14[0-9])|(13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$";
+			if (username.matches(mobileRegx)) {
+				loginType = "Mobile";
+				return loginType;
+			} else {
+				throw new ServiceException("输入的手机号码不合法");
+			}
+		}
+		String usernameRegx = "^[a-zA-Z0-9]+$";
+		if (username.matches(usernameRegx)) {
+			loginType = "Username";
+			return loginType;
+		}
+		return loginType;
 	}
 	
 	

@@ -2,57 +2,26 @@ package com.jt.sys.token;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
 
-public class DefindToken extends UsernamePasswordToken {
+public class DefindToken extends UsernamePasswordToken{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String method;
+	 private String loginType;
 
-	public String getMethod() {
-		return method;
-	}
+	    public DefindToken(final String username, final String password,String loginType) {
+	        super(username,password);
+	        this.loginType = loginType;
+	    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+		
+		public String getLoginType() {
+	        return loginType;
+	    }
 
-	public DefindToken() {
-		super();
-	}
+	    public void setLoginType(String loginType) {
+	        this.loginType = loginType;
+	    }
 
-	public DefindToken(String username, char[] password, boolean rememberMe, String host) {
-		super(username, password, rememberMe, host);
-	}
-
-	public DefindToken(String username, char[] password, boolean rememberMe) {
-		super(username, password, rememberMe);
-	}
-
-	public DefindToken(String username, char[] password, String host) {
-		super(username, password, host);
-	}
-
-	public DefindToken(String username, char[] password) {
-		super(username, password);
-	}
-
-	public DefindToken(String username, String password, boolean rememberMe, String host) {
-		super(username, password, rememberMe, host);
-	}
-
-	public DefindToken(String username, String password, boolean rememberMe) {
-		super(username, password, rememberMe);
-	}
-
-	public DefindToken(String username, String password, String host) {
-		super(username, password, host);
-	}
-
-	public DefindToken(String username, String password) {
-		super(username, password);
-	}
 	
+
 }

@@ -26,6 +26,7 @@
        http://www.springframework.org/schema/context/spring-context-4.3.xsd" >
        
        
+    <import resource="shiro-configs.xml"/>
     <!-- 自动扫描该包 -->
     <context:component-scan base-package="com.jt" />
     <context:component-scan base-package="mybatis"/>
@@ -63,83 +64,7 @@
 		<property name="basePackage" value="com.jt.**.dao;mybatis.mapper"/>
 	</bean>
 	
-	<!-- 整合shiro的配置 -->
-	<!--1.配置realm对象 -->
-	<bean id="userRealm" class="com.jt.sys.service.realm.ShiroUserRealm">
-    	<!-- 配置凭证算法匹配器 -->
-    	<property name="credentialsMatcher">
-    		<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-    			<property name="hashAlgorithmName" value="MD5"/>
-    			<!-- <property name="hashIterations" value="1024"/> -->
-    		</bean>
-    	</property>
-   </bean>
-   <bean id="userRealm02" 
-	        class="com.jt.sys.service.realm.ShiroUserRealm02">
-	    <!-- 凭证匹配器(密码加密) -->
-	    <property name="credentialsMatcher">
-    		<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-    		<property name="hashAlgorithmName" value="MD5"/>
-    			<!-- <property name="hashIterations" value="1024"/> -->
-    		</bean>
-    	</property>
-	</bean>
-   <!-- 2.配置cacheManager -->
-   <!-- 2.1 配置缓存(可选) -->
-   <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <property name="cacheManagerConfigFile" 
-                  value="classpath:ehcache.xml"/> 
-   </bean>
-   <!-- 2.2 配置securityManager -->
-  <bean id="securityManager" 
-	   class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-	    <property name="cacheManager" ref="cacheManager"/>  
-	    <property name="realms">
-	    <list>
-	    <ref bean="userRealm"/>
-	    <ref bean="userRealm02"/>
-	    </list>
-	    </property>
-	</bean>
-	<!-- realm配置验证方式 -->
-	<bean id="authenticator" class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
-      <property name="authenticationStrategy" value="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"></property>
-    </bean>
-   <!-- 3.配置ShiroFilterBean -->
-   <bean id="shiroFilterBean" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-        <!-- shiro的核心安全接口 -->
-        <property name="securityManager" ref="securityManager"/>
-        <!-- 要求登录时的连接 -->
-        <property name="loginUrl" value="/loginUI.do"></property>
-         <!-- 登录成功后要跳转的连接(此处已经在登录中处理了) -->
-         <!-- <property name="successUrl" value="/index.jsp"></property> -->
-         <!-- 访问未对其授权的资源时,要跳转的连接 
-         <property name="unauthorizedUrl" value="/default.html"></property>-->
-         <!-- shiro连接约束配置 -->
-         <property name="filterChainDefinitions">
-             <value>
-                 <!-- 对静态资源设置允许匿名访问 -->
-                 /bower_components/** = anon
-                 /build/** = anon
-                 /dist/** = anon
-                 /plugins/** = anon
-                 /doLogin.do = anon
-                 /doLogin02.do = anon
-                 <!-- 退出 -->
-                 /doLogout.do = logout  <!-- 会调用Subject的logout方法,此方法会将session清空 -->
-                 <!-- 剩余其他路径，必须认证通过才可以访问 -->
-                 /** = authc
-             </value>
-         </property>
-     </bean>
-	<!-- 配置shiro的生命周期 -->
-	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
-	<!-- 启用shiro注解检查 -->
-	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
-	 depends-on="lifecycleBeanPostProcessor"/>
-	<bean  class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-	    <property name="securityManager" ref="securityManager"/>
-    </bean>
+	
 	
 	<!-- 启用AOP注解(自动为目标对象创建代理对象) -->
        <aop:aspectj-autoproxy />

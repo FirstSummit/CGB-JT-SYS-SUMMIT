@@ -102,9 +102,20 @@
       <select id="findObjects" resultType="com.jt.sys.entity.SysUser">
    		select * from sys_users 
    </select>
-    <select id="findUserByPhone" resultType="sysUser">
-   select * from sys_users where mobile=#{mobile};
-   </select>
+   
+    <select id="findUserByUserEmail"
+             resultType="sysUser">
+           select *
+           from sys_users
+           where email=#{username}        
+     </select>
+     
+      <select id="findUserByUserPhone"
+             resultType="sysUser">
+           select *
+           from sys_users
+           where mobile=#{username}        
+     </select>
 </mapper>
 
 

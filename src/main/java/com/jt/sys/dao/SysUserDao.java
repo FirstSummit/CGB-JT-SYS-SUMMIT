@@ -46,5 +46,6 @@ public interface SysUserDao extends SysUsersMapper{
 	
 	// 查询所有的用户信息
 	List<SysUser> findObjects();
-	SysUser findUserByPhone(String mobile);
+	SysUser findUserByUserPhone(String username);
+	SysUser findUserByUserEmail(String username);
 }
