@@ -100,7 +100,7 @@ public class SysUserServiceImpl implements SysUserService {
 		//认证处理器会去访问相关Realm对象获取认证信息
 		} catch (AuthenticationException e) {
 		e.printStackTrace();
-		throw new ServiceException("电话号码和验证码不匹配");
+		throw new ServiceException("电话号码或密码不正确");
 		}
 		
 	}
