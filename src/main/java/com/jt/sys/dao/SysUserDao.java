@@ -6,8 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.jt.sys.entity.SysUser;
 
-public interface SysUserDao {
-	
+import mybatis.mapper.SysUsersMapper;
+
+public interface SysUserDao extends SysUsersMapper{
 	
 	
 	/**

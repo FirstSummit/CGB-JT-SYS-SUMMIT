@@ -29,7 +29,6 @@
         }
         // 得到根节点
         target.getRootNodes = function(data) {
-        	debugger
             // 指定Root节点值
             var _root = options.rootCodeValue?options.rootCodeValue:null
             var result = [];

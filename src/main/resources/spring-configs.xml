@@ -28,6 +28,7 @@
        
     <!-- 自动扫描该包 -->
     <context:component-scan base-package="com.jt" />
+    <context:component-scan base-package="mybatis"/>
     <!-- 启用mvc注解 -->
     <mvc:annotation-driven />
     <!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
@@ -59,7 +60,7 @@
     <!-- 扫描DAO接口所在包，Spring会自动查找其下的dao
                   接口，然后为接口创建代理对象-->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.jt.**.dao"/>
+		<property name="basePackage" value="com.jt.**.dao;mybatis.mapper"/>
 	</bean>
 	
 	<!-- 整合shiro的配置 -->

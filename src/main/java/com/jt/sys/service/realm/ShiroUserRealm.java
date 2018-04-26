@@ -18,6 +18,10 @@ import org.springframework.util.StringUtils;
 import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.token.DefindToken;
+
+import mybatis.po.SysUsers;
+import mybatis.po.SysUsersExample;
+import mybatis.po.SysUsersExample.Criteria;
 /***
  * 借助此realm类型的对象实现用户认证及权限
  * 相关数据的获取
@@ -73,8 +77,13 @@ public class ShiroUserRealm  extends AuthorizingRealm {
 		}
 		String username=upToken.getUsername();
 		//2.根据用户信息进行数据库查询
-		SysUser user=
-		sysUserDao.findUserByUserName(username);
+		//SysUser user=
+		//sysUserDao.findUserByUserName(username);
+		SysUsersExample example=new SysUsersExample();
+		Criteria criteria=example.createCriteria();
+		criteria.andUsernameEqualTo(username);
+		List<SysUsers> selectByExample =sysUserDao.selectByExample(example);
+		SysUsers user=selectByExample.get(0);
 		//3.对查询结果进行验证(例如这个用户是否已经被禁用了)
 		if(user==null)
 		throw new AuthenticationException("此用户不存在");
