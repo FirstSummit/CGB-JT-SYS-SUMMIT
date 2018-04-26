@@ -161,7 +161,8 @@ var setting = {
 		//$("#passwordId").val(data.user.password);
 		$("#emailId").val(data.user.email);
 		$("#phoneId").val(data.user.mobile);
-
+		$(".form-horizontal").data("departId", data.departmentId);
+		
 		$(".form-horizontal").data("oldDepartmentId", data.departmentId);
 		if (data.departmentId) {
 			var departName = findDepartment(data.user.id);

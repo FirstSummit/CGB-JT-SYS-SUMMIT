@@ -1,22 +1,12 @@
 package com.jt.sys.service.impl;
 
 import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -35,6 +25,7 @@ import com.jt.common.exception.ServiceException;
 import com.jt.common.util.ExcelUtil;
 import com.jt.common.util.ShiroUtils;
 import com.jt.common.vo.CheckBox;
+import com.jt.sys.dao.SysDepartmentDao;
 import com.jt.sys.dao.SysRoleDao;
 import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.dao.SysUserDepartmentDao;
@@ -53,7 +44,8 @@ public class SysUserServiceImpl implements SysUserService {
 	private SysRoleDao sysRoleDao;
 	@Autowired
 	private SysUserRoleDao sysUserRoleDao;
-	
+	@Autowired
+	private SysDepartmentDao sysDepartmentDao;
 	@Override
 	public void login(String method,String username,String password) {
 		System.out.println(sysRoleDao.getClass().getName());
@@ -143,10 +135,23 @@ public class SysUserServiceImpl implements SysUserService {
 		sysUserRoleDao.deleteObject(entity.getId(),null);
 		sysUserRoleDao.insertObject(
 			entity.getId(), roleIds.split(","));
+		updateCount(entity.getId(),departmentId,oldDepartmentId);
 		}catch(Exception e){
 		e.printStackTrace();
 		throw new ServiceException("系统维护中");
 		}
+	}
+	
+	
+	public void updateCount(Integer user_id,Integer departmentId,Integer oldDepartmentId) {
+		sysUserDepartmentDao.deleteObjectById(user_id);
+		sysUserDepartmentDao.insertObject(user_id, departmentId);
+		int oldCount = sysDepartmentDao.findCountById(oldDepartmentId);
+		oldCount--;
+		sysDepartmentDao.updateCount(oldDepartmentId, oldCount);
+		int count = sysDepartmentDao.findCountById(departmentId);
+		count++;
+		sysDepartmentDao.updateCount(departmentId, count);
 	}
 	@Override
 	public Map<String, Object> findObjectById(Integer id) {
@@ -212,6 +217,7 @@ public class SysUserServiceImpl implements SysUserService {
 		sysUserRoleDao.insertObject(
 				entity.getId(),
 				roleIds.split(","));
+		addCount(entity.getId(),departmentId);
 		}catch(Exception e){
 		e.printStackTrace();
 		 //报警
@@ -219,6 +225,13 @@ public class SysUserServiceImpl implements SysUserService {
 		}
 		//4.返回结果
 		return rows;
+	}
+	
+	public void addCount(Integer user_id,Integer department_id) {
+		sysUserDepartmentDao.insertObject(user_id, department_id);
+		int count = sysDepartmentDao.findCountById(department_id);
+		count++;
+		sysDepartmentDao.updateCount(department_id,count);
 	}
 	@Override
 	public List<CheckBox> findRoles() {

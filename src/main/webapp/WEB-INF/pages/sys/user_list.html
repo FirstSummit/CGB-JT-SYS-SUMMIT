@@ -141,9 +141,12 @@
 		 var params=getEditFormData();
 		 if(id){
 			 params.id=id,
-			 params.departmentId = $(".form-horizontal").data("departId");
+			 //params.departmentId = $(".form-horizontal").data("departId");
 			 params.oldDepartmentId = $(".form-horizontal").data("oldDepartmentId");
 		 };
+		 if(!params.departmentId)params.departmentId=0;
+		 if(!params.oldDepartmentId)params.oldDepartmentId=0;	 
+		
 		 //2.发起异步请求
 		 var insertUrl="user/doSaveObject.do";
 		 var updateUrl="user/doUpdateObject.do";
