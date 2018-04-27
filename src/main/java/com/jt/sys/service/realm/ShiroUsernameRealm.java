@@ -41,10 +41,10 @@ public class ShiroUsernameRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		System.out.println("realm.doGetAuthorizationInfo");
 		// 1.获取登陆用户身份信息
-		String username = (String) principals.getPrimaryPrincipal();
+		SysUser sysUser = (SysUser) principals.getPrimaryPrincipal();
 		// 2.查找用户的权限信息
 		List<String> list = // sys:user:update,sys:user:view,....,
-		sysUserDao.findUserPermissions(username);
+		sysUserDao.findUserPermissions(sysUser.getUsername());
 		System.out.println("list=" + list);
 		Set<String> permissions = new HashSet<>();
 		for (String permission : list) {
@@ -86,7 +86,7 @@ public class ShiroUsernameRealm extends AuthorizingRealm {
 		ByteSource byteSource = ByteSource.Util.bytes(sysUser.getSalt());
 		// 3.2对用户信息进行封装返回.
 		AuthenticationInfo info = new SimpleAuthenticationInfo(
-				sysUser.getUsername(), // 主身份
+				sysUser, // 主身份
 				sysUser.getPassword(), // 已加密的密码
 				byteSource, // salt对应的字节源对象
 				getName());// realm 的名字

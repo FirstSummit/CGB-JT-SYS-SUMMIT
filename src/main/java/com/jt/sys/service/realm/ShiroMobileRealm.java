@@ -83,7 +83,8 @@ public class ShiroMobileRealm extends AuthorizingRealm {
 		// 3.1获取用户salt值,并将其转换为一个字节源对象
 		ByteSource byteSource = ByteSource.Util.bytes(sysUser.getSalt());
 		// 3.2对用户信息进行封装返回.
-		AuthenticationInfo info = new SimpleAuthenticationInfo(sysUser.getUsername(), // 主身份
+		AuthenticationInfo info = new SimpleAuthenticationInfo(
+				sysUser, // 主身份
 				sysUser.getPassword(), // 已加密的密码
 				byteSource, // salt对应的字节源对象
 				getName());// realm 的名字
